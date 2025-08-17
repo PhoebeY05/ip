@@ -17,7 +17,7 @@ public class ChatBot {
         // Regex
         String markRegex ="^mark \\d+";
         String unmarkRegex = "^unmark \\d+";
-        String todoRegex = "^todo .*";
+        String todoRegex = "^todo (.*)";
         String deadlineRegex = "^deadline (.*) /by (\\w+)";
         String eventRegex = "^event (.*) /from (.+) /to (.+)$";
 
@@ -25,6 +25,9 @@ public class ChatBot {
             String input = scanner.nextLine();
 
             // Prep for extracting regex
+            Pattern todoPattern = Pattern.compile(todoRegex);
+            Matcher todoMatcher = todoPattern.matcher(input);
+
             Pattern deadlinePattern = Pattern.compile(deadlineRegex);
             Matcher deadlineMatcher = deadlinePattern.matcher(input);
 
@@ -55,8 +58,12 @@ public class ChatBot {
                 System.out.println(t);
             } else { // Add tasks
                 System.out.println("Got it. I've added this task:");
-                if (input.matches(todoRegex)) {
-                    Todo t = new Todo(input);
+                if (todoMatcher.matches()) {
+                    // Extract regex
+                    String description = todoMatcher.group(1).trim();
+                    // Create new task
+                    Todo t = new Todo(description);
+                    tasks.add(t);
                     System.out.println(t);
                 } else if (deadlineMatcher.matches()) {
                     // Extract regex

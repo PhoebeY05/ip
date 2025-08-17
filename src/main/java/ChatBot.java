@@ -13,40 +13,72 @@ public class ChatBot {
 
         Scanner scanner = new Scanner(System.in);
         ArrayList<Task> tasks = new ArrayList<>();
-        Pattern mark = Pattern.compile("mark \\d+");
-        Pattern unmark = Pattern.compile("unmark \\d+");
+
+        // Regex
+        String markRegex ="^mark \\d+";
+        String unmarkRegex = "^unmark \\d+";
+        String todoRegex = "^todo .*";
+        String deadlineRegex = "^deadline (.*) /by (\\w+)";
+        String eventRegex = "^event (.*) /from (.+) /to (.+)$";
 
         while (true) {
             String input = scanner.nextLine();
-            Matcher markMatcher = mark.matcher(input);
-            Matcher unmarkMatcher = unmark.matcher(input);
+
+            // Prep for extracting regex
+            Pattern deadlinePattern = Pattern.compile(deadlineRegex);
+            Matcher deadlineMatcher = deadlinePattern.matcher(input);
+
+            Pattern eventPattern = Pattern.compile(eventRegex);
+            Matcher eventMatcher = eventPattern.matcher(input);
 
             System.out.println("------------------------------------");
-            if (input.equals("bye")) {
+            if (input.equals("bye")) { // Exit
                 System.out.println("Bye. Hope to see you again soon!");
                 System.out.println("------------------------------------");
                 break;
-            } else if (input.equals("list")) {
+            } else if (input.equals("list")) { // List all tasks
                 for (int i = 0; i < tasks.size(); i++) {
                     Task curr = tasks.get(i);
                     System.out.printf("%d.%s\n", i + 1, curr.toString());
                 }
-            } else if (markMatcher.matches()) {
+            } else if (input.matches(markRegex)) { // Mark as done
                 int i = Integer.parseInt(input.split(" ")[1]) - 1;
                 Task t = tasks.get(i);
                 t.markAsDone();
                 System.out.println("Nice! I've marked this task as done: ");
                 System.out.println(t);
-            } else if (unmarkMatcher.matches()) {
+            } else if (input.matches(unmarkRegex)) { // Mark as undone
                 int i = Integer.parseInt(input.split(" ")[1]) - 1;
                 Task t = tasks.get(i);
                 t.markAsUndone();
                 System.out.println("OK, I've marked this task as not done yet: ");
                 System.out.println(t);
-            } else {
-                Task t = new Task(input);
-                tasks.add(t);
-                System.out.println("added: " + input);
+            } else { // Add tasks
+                System.out.println("Got it. I've added this task:");
+                if (input.matches(todoRegex)) {
+                    Todo t = new Todo(input);
+                    System.out.println(t);
+                } else if (deadlineMatcher.matches()) {
+                    // Extract regex
+                    String description = deadlineMatcher.group(1).trim();
+                    String by = deadlineMatcher.group(2).trim();
+                    // Create new task
+                    Deadline d = new Deadline(description, by);
+                    tasks.add(d);
+                    System.out.println(d);
+                } else if (eventMatcher.matches()) {
+                    // Extract regex
+                    String description = eventMatcher.group(1).trim();
+                    String from = eventMatcher.group(2).trim();
+                    String to = eventMatcher.group(3).trim();
+                    // Create new task
+                    Event e = new Event(description, from, to);
+                    tasks.add(e);
+                    System.out.println(e);
+                } else {
+                    break;
+                }
+                System.out.printf("Now you have %d tasks in the list.\n", tasks.size());
             }
             System.out.println("------------------------------------");
         }

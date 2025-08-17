@@ -20,6 +20,7 @@ public class ChatBot {
         String todoRegex = "^todo (.*)";
         String deadlineRegex = "^deadline (.*) /by (\\w+)";
         String eventRegex = "^event (.*) /from (.+) /to (.+)$";
+        String deleteRegex = "^delete \\d+";
         try {
             while (true) {
                 String input = scanner.nextLine();
@@ -56,6 +57,13 @@ public class ChatBot {
                     t.markAsUndone();
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println(t);
+                } else if (input.matches(deleteRegex)) { // Remove tasks
+                    int i = Integer.parseInt(input.split(" ")[1]) - 1;
+                    Task t = tasks.get(i);
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println(t);
+                    tasks.remove(i);
+                    System.out.printf("Now you have %d tasks in the list.\n", tasks.size());
                 } else { // Add tasks
                     System.out.println("Got it. I've added this task:");
                     if (todoMatcher.matches()) {

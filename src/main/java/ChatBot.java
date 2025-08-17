@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ChatBot {
+
     public static void main(String[] args) {
         System.out.println("------------------------------------");
         System.out.println("Hello! I'm ChatBot!");
@@ -9,7 +10,7 @@ public class ChatBot {
         System.out.println("------------------------------------");
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
         while (true) {
             String input = scanner.nextLine();
             System.out.println("------------------------------------");
@@ -18,11 +19,13 @@ public class ChatBot {
                 System.out.println("------------------------------------");
                 break;
             } else if (input.equals("list")) {
-                for (int i = 0; i < list.size(); i++) {
-                    System.out.printf("%d. %s\n", i + 1, list.get(i));
+                for (int i = 0; i < tasks.size(); i++) {
+                    Task curr = tasks.get(i);
+                    System.out.printf("%d.[%S] %s\n", i + 1, curr.getStatusIcon(), curr.description);
                 }
             } else {
-                list.add(input);
+                Task t = new Task(input);
+                tasks.add(t);
                 System.out.println("added: " + input);
             }
             System.out.println("------------------------------------");

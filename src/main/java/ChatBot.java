@@ -45,13 +45,13 @@ public class ChatBot {
                 int i = Integer.parseInt(input.split(" ")[1]) - 1;
                 Task t = tasks.get(i);
                 t.markAsDone();
-                System.out.println("Nice! I've marked this task as done: ");
+                System.out.println("Nice! I've marked this task as done:");
                 System.out.println(t);
             } else if (input.matches(unmarkRegex)) { // Mark as undone
                 int i = Integer.parseInt(input.split(" ")[1]) - 1;
                 Task t = tasks.get(i);
                 t.markAsUndone();
-                System.out.println("OK, I've marked this task as not done yet: ");
+                System.out.println("OK, I've marked this task as not done yet:");
                 System.out.println(t);
             } else { // Add tasks
                 System.out.println("Got it. I've added this task:");

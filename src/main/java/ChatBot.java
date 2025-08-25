@@ -34,25 +34,15 @@ public class ChatBot {
             if (!f.exists()) {
                 f.createNewFile();
             }
+            while (true) {
+                saveTasks(tasks, f);
 
-
-            // Regex
-            String markRegex = "^mark \\d+";
-            String unmarkRegex = "^unmark \\d+";
-            String todoRegex = "^todo (.*)";
-            String deadlineRegex = "^deadline (.*) /by (.+)";
-            String eventRegex = "^event (.*) /from (.+) /to (.+)$";
-            String deleteRegex = "^delete \\d+";
-            try {
-                while (true) {
-                    saveTasks(tasks, f);
-
-                    String input = scanner.nextLine();
+                String input = scanner.nextLine();
+                try {
                     ui.handleInput(input, tasks);
-
+                } catch (ChatBotException e) {
+                    System.out.println(e.getMessage());
                 }
-            } catch (ChatBotException e) {
-                System.out.println(e.getMessage());
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());

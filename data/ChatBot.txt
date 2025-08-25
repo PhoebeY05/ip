@@ -1,2 +1,1 @@
-[T][X] read books
-[D][ ] read book (by: today)
+[E][ ] work event (from: Dec 2 2019, 18:00 to: Dec 2 2019, 21:00)

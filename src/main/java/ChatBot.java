@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import java.io.File;
 import java.io.FileWriter;
 
+
 public class ChatBot {
     private static void saveTasks(ArrayList<Task> tasks, File f) throws Exception {
         try (FileWriter fw = new FileWriter(f, false)) { // false = overwrite
@@ -34,14 +35,12 @@ public class ChatBot {
                 f.createNewFile();
             }
 
-            FileWriter fw = new FileWriter(f);
-
 
             // Regex
             String markRegex = "^mark \\d+";
             String unmarkRegex = "^unmark \\d+";
             String todoRegex = "^todo (.*)";
-            String deadlineRegex = "^deadline (.*) /by (\\w+)";
+            String deadlineRegex = "^deadline (.*) /by (.+)";
             String eventRegex = "^event (.*) /from (.+) /to (.+)$";
             String deleteRegex = "^delete \\d+";
             try {

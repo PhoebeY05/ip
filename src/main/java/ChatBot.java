@@ -20,8 +20,9 @@ public class ChatBot {
             storage.saveToStorage(tasks);
 
             String input = scanner.nextLine();
+            Parser parser = new Parser(input);
             try {
-                if (!ui.handleInput(input, tasks)) {
+                if (!ui.handleInput(parser, tasks)) {
                     break;
                 }
             } catch (ChatBotException e) {

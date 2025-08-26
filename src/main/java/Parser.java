@@ -76,7 +76,7 @@ public class Parser {
 
     public ArrayList<String> getArguments() throws ChatBotException {
         ArrayList<String> args = new ArrayList<>();
-        String description = "";
+        String description;
         switch (command) {
             case TODO:
                 description = this.todoMatcher.group(1).trim();

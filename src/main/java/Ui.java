@@ -52,7 +52,7 @@ public class Ui {
             Task t = tasks.get(i - 1);
             tasks.remove(i - 1);
             this.showDeleted(t, tasks.size());
-        } else { // Add tasks
+        } else if (todoMatcher.matches() || deadlineMatcher.matches() || eventMatcher.matches()) { // Add tasks
             System.out.println("Got it. I've added this task:");
             Task addedTask;
             if (todoMatcher.matches()) {
@@ -72,7 +72,7 @@ public class Ui {
                 String by = deadlineMatcher.group(2).trim();
                 // Create new task
                 addedTask = new Deadline(description, by);
-            } else if (eventMatcher.matches()) {
+            } else {
                 // Extract regex
                 String description = eventMatcher.group(1).trim();
                 if (description.isEmpty()) {
@@ -82,11 +82,11 @@ public class Ui {
                 String to = eventMatcher.group(3).trim();
                 // Create new task
                 addedTask = new Event(description, from, to);
-            } else {
-                throw new ChatBotException("OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
             tasks.add(addedTask);
             this.showAddedTask(addedTask, tasks.size());
+        } else {
+            throw new ChatBotException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
         System.out.println("------------------------------------");
 

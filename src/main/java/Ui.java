@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Ui {
 
-    public boolean handleInput(Parser parser, ArrayList<Task> tasks) throws ChatBotException{
+    public boolean handleInput(Parser parser, TaskList tasks) throws ChatBotException{
 
         System.out.println("------------------------------------");
         CommandType commandType = parser.getCommandType();
@@ -28,8 +28,8 @@ public class Ui {
                 break;
             case DELETE:
                 Task tDeleted = parser.getTask(tasks);
-                tasks.remove(tDeleted);
-                this.showDeleted(tDeleted, tasks.size());
+                tasks.deleteTask(tDeleted);
+                this.showDeleted(tDeleted, tasks.getTotalTasks());
                 break;
             case TODO:
                 System.out.println("Got it. I've added this task:");
@@ -46,8 +46,8 @@ public class Ui {
         }
 
         if (addedTask != null) {
-            tasks.add(addedTask);
-            this.showAddedTask(addedTask, tasks.size());
+            tasks.addTask(addedTask);
+            this.showAddedTask(addedTask, tasks.getTotalTasks());
         }
 
         System.out.println("------------------------------------");
@@ -59,11 +59,8 @@ public class Ui {
         System.out.println("------------------------------------");
     }
 
-    public void listTasks(ArrayList<Task> tasks) {
-        for (int i = 0; i < tasks.size(); i++) {
-            Task curr = tasks.get(i);
-            System.out.printf("%d.%s\n", i + 1, curr.toString());
-        }
+    public void listTasks(TaskList tasks) {
+        System.out.println(tasks);
     }
 
     public void showMarkedAsDone(Task t) {

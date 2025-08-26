@@ -31,10 +31,10 @@ public class Storage {
         }
     }
 
-    public void saveToStorage(ArrayList<Task> tasks) {
+    public void saveToStorage(TaskList tasks) {
         File f = new File(this.filePath);
         try (FileWriter fw = new FileWriter(f, false)) { // false = overwrite
-            for (Task t : tasks) {
+            for (Task t : tasks.getTasks()) {
                 fw.write(t + System.lineSeparator());
             }
         } catch (Exception e) {

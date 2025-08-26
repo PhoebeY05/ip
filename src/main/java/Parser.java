@@ -57,7 +57,7 @@ public class Parser {
         return this.command;
     }
 
-    public Task getTask(ArrayList<Task> tasks) throws ChatBotException {
+    public Task getTask(TaskList tasks) throws ChatBotException {
         String[] parts = input.split(" ");
         if (parts.length < 2) {
             throw new ChatBotException("OOPS!!! You need to specify a task number.");
@@ -68,10 +68,10 @@ public class Parser {
         } catch (NumberFormatException e) {
             throw new ChatBotException("OOPS!!! Task number must be a valid integer.");
         }
-        if (i < 1 || i > tasks.size()) {
+        if (i < 1 || i > tasks.getTotalTasks()) {
             throw new ChatBotException("OOPS!!! Task does not exist.");
         }
-        return tasks.get(i - 1);
+        return tasks.getSpecificTask(i - 1);
     }
 
     public ArrayList<String> getArguments() throws ChatBotException {

@@ -13,8 +13,7 @@ public class ChatBot {
         System.out.println("------------------------------------");
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
-
+        TaskList tasks = new TaskList();
 
         while (true) {
             storage.saveToStorage(tasks);

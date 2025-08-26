@@ -1,19 +1,30 @@
-import java.util.ArrayList;
 import java.util.Scanner;
-
 
 public class ChatBot {
 
-    public static void main(String[] args) {
-        Ui ui = new Ui();
-        Storage storage = new Storage("data/tasks.txt");
+    private final Storage storage;
+    private TaskList tasks;
+    private final Ui ui;
+
+    public ChatBot(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = new TaskList(storage.load());
+        } catch (ChatBotException e) {
+            ui.showLoadingError();
+            System.out.println(e.getMessage());
+            tasks = new TaskList();
+        }
+    }
+
+    public void run() {
         System.out.println("------------------------------------");
         System.out.println("Hello! I'm ChatBot!");
         System.out.println("What can I do for you?");
         System.out.println("------------------------------------");
 
         Scanner scanner = new Scanner(System.in);
-        TaskList tasks = new TaskList();
 
         while (true) {
             storage.saveToStorage(tasks);
@@ -28,5 +39,9 @@ public class ChatBot {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public static void main(String[] args) {
+        new ChatBot("data/tasks.txt").run();
     }
 }

@@ -36,9 +36,11 @@ public class Ui {
                 addedTask = new Todo(args.get(0));
                 break;
             case DEADLINE:
+                System.out.println("Got it. I've added this task:");
                 addedTask = new Deadline(args.get(0), args.get(1));
                 break;
             case EVENT:
+                System.out.println("Got it. I've added this task:");
                 addedTask = new Event(args.get(0), args.get(1), args.get(2));
                 break;
             default:
@@ -76,15 +78,15 @@ public class Ui {
     public void showDeleted(Task t, int size) {
         System.out.println("Noted. I've removed this task:");
         System.out.println(t);
-        System.out.printf("Now you have %d tasks in the list.\n", size);
+        System.out.printf("Now you have %d task(s) in the list.\n", size);
     }
 
     public void showAddedTask(Task t, int size) {
         System.out.println(t);
-        System.out.printf("Now you have %d tasks in the list.\n", size);
+        System.out.printf("Now you have %d task(s) in the list.\n", size);
     }
 
     public void showLoadingError() {
-        System.out.println("Error");
+        System.out.println("LOADING ERROR");
     }
 }

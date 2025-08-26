@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Storage {
@@ -34,36 +35,43 @@ public class Storage {
         File f = new File(this.filePath);
         try (FileWriter fw = new FileWriter(f, false)) { // false = overwrite
             for (Task t : tasks.getTasks()) {
-                fw.write(t + System.lineSeparator());
+                if (t != null) {
+                    fw.write(t + System.lineSeparator());
+                }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public TaskList loadFromFile() {
-        TaskList tasks = new TaskList();
+    public ArrayList<Task> load() throws ChatBotException {
+        ArrayList<Task> tasks = new ArrayList<>();
+
         try {
             File f = new File(this.filePath);
             Scanner myReader = new Scanner(f);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
+                if (data.trim().isEmpty()) {
+                    break;
+                }
 
-                Todo todo = Todo.toTodo(data);
-                Deadline deadline = Deadline.toDeadline(data);
-                Event event = Event.toEvent(data);
-                if (todo != null) {
-                    tasks.addTask(todo);
-                } else if (deadline != null) {
-                    tasks.addTask(deadline);
+                if (data.startsWith("[T]")) {
+                    Todo todo = Todo.toTodo(data);
+                    tasks.add(todo);
+                } else if (data.startsWith("[D]")) {
+                    Deadline deadline = Deadline.toDeadline(data);
+                    tasks.add(deadline);
+                } else if (data.startsWith("[E]")){
+                    Event event = Event.toEvent(data);
+                    tasks.add(event);
                 } else {
-                    tasks.addTask(event);
+                    throw new ChatBotException("OOPS!! Data file has unknown line!");
                 }
             }
             myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            throw new ChatBotException(e.getMessage());
         }
         return tasks;
     }

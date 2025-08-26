@@ -34,7 +34,7 @@ public class TaskList {
     @Override
     public String toString() {
         StringBuilder tasks = new StringBuilder();
-        for (int i = 0; i < this.tasks.size(); i++) {
+        for (int i = 0; i < this.getTotalTasks(); i++) {
             Task curr = this.tasks.get(i);
             tasks.append(String.format("%d.%s", i + 1, curr.toString()));
             if (i < this.tasks.size() - 1) {

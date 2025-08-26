@@ -21,7 +21,9 @@ public class ChatBot {
 
             String input = scanner.nextLine();
             try {
-                ui.handleInput(input, tasks);
+                if (!ui.handleInput(input, tasks)) {
+                    break;
+                }
             } catch (ChatBotException e) {
                 System.out.println(e.getMessage());
             }

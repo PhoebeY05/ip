@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 public class Ui {
 
-    public void handleInput(String input, ArrayList<Task> tasks) throws ChatBotException{
+    public boolean handleInput(String input, ArrayList<Task> tasks) throws ChatBotException{
         String markRegex = "^mark \\d+";
         String unmarkRegex = "^unmark \\d+";
         String todoRegex = "^todo (.*)";
@@ -26,6 +26,7 @@ public class Ui {
 
         if (input.equals("bye")) { // Exit
             this.endConversation();
+            return false;
         } else if (input.equals("list")) { // List all tasks
             this.listTasks(tasks);
         } else if (input.matches(markRegex)) { // Mark as done
@@ -89,7 +90,7 @@ public class Ui {
             throw new ChatBotException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
         System.out.println("------------------------------------");
-
+        return true;
     }
 
     public void endConversation() {

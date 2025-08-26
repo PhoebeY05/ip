@@ -18,7 +18,7 @@ public class Event extends Task {
     }
 
     public static Event toEvent(String event) {
-        String regex = "^\\[E]\\[( |X)]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$\n";
+        String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$\n";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(event);
         if (matcher.matches()) {

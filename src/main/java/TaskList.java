@@ -1,15 +1,14 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class TaskList {
-    private ArrayList<Task> tasks;
+    private final ArrayList<Task> tasks;
 
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
     public TaskList() {
-        this(new ArrayList<Task>());
+        this(new ArrayList<>());
     }
 
     public void addTask(Task task) {

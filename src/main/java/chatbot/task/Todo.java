@@ -9,7 +9,7 @@ public class Todo extends Task {
     }
 
     public static Todo toTodo(String todo) {
-        String regex = "^\\[T]\\[[ X]]\\s+(.*)$";
+        String regex = "^\\[T]\\[([ X])]\\s+(.*)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(todo);
         if (matcher.matches()) {

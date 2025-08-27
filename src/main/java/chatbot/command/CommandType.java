@@ -1,4 +1,4 @@
-package command;
+package chatbot.command;
 
 public enum CommandType {
     BYE,

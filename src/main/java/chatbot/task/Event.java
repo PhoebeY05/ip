@@ -21,8 +21,14 @@ public class Event extends Task {
         }
     }
 
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
+        super(description);
+        this.from = from;
+        this.to = to;
+    }
+
     public static Event toEvent(String event) {
-        String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$\n";
+        String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(event);
         if (matcher.matches()) {
@@ -30,15 +36,16 @@ public class Event extends Task {
             String description = matcher.group(2);
             String from = matcher.group(3);
             String to = matcher.group(4);
-            try {
-                Event eventObject = new Event(description, from, to);
-                if (status) {
-                    eventObject.markAsDone();
-                }
-                return eventObject;
-            } catch (ChatBotException e) {
-                System.out.println(e.getMessage());
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
+            LocalDateTime fromDate = LocalDateTime.parse(from, formatter);
+            LocalDateTime toDate = LocalDateTime.parse(to, formatter);
+
+            Event eventObject = new Event(description, fromDate, toDate);
+            if (status) {
+                eventObject.markAsDone();
             }
+            return eventObject;
 
         }
         return null;

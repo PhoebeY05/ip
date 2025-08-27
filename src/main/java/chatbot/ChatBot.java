@@ -4,7 +4,7 @@ import chatbot.exception.ChatBotException;
 import chatbot.storage.Storage;
 import chatbot.task.TaskList;
 import chatbot.ui.Ui;
-import command.Parser;
+import chatbot.command.Parser;
 
 import java.util.Scanner;
 
@@ -28,7 +28,7 @@ public class ChatBot {
 
     public void run() {
         System.out.println("------------------------------------");
-        System.out.println("Hello! I'm chatbot.ChatBot!");
+        System.out.println("Hello! I'm ChatBot!");
         System.out.println("What can I do for you?");
         System.out.println("------------------------------------");
 

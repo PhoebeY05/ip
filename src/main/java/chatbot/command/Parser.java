@@ -1,4 +1,4 @@
-package command;
+package chatbot.command;
 
 import chatbot.exception.ChatBotException;
 import chatbot.task.Task;

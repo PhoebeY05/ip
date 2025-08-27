@@ -2,8 +2,8 @@ package chatbot.ui;
 
 import chatbot.exception.ChatBotException;
 import chatbot.task.*;
-import command.CommandType;
-import command.Parser;
+import chatbot.command.CommandType;
+import chatbot.command.Parser;
 
 import java.util.ArrayList;
 

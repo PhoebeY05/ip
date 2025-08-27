@@ -14,16 +14,22 @@ public class Deadline extends Task {
         this.by = LocalDateTime.parse(by, DateTimeFormatter.ofPattern("d/M/yyyy HHmm"));
     }
 
+    public Deadline(String description, LocalDateTime by) {
+        super(description);
+        this.by = by;
+    }
+
     public static Deadline toDeadline(String deadline) {
-        String regex = "^\\[D]\\[\\s|X]\\s+(.*?)\\s+\\(by:\\s+(.+)\\)$\n";
+        String regex = "^\\[D]\\[([ X])]\\s+(.*?)\\s+\\(by:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(deadline);
         if (matcher.matches()) {
             boolean status = matcher.group(1).equals("X");
             String description = matcher.group(2);
             String by = matcher.group(3);
+            LocalDateTime byDate = LocalDateTime.parse(by, DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
 
-            Deadline deadlineObject = new Deadline(description, by);
+            Deadline deadlineObject = new Deadline(description, byDate);
             if (status) {
                 deadlineObject.markAsDone();
             }

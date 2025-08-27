@@ -1,8 +1,15 @@
+package chatbot.ui;
+
+import chatbot.exception.ChatBotException;
+import chatbot.task.*;
+import command.CommandType;
+import command.Parser;
+
 import java.util.ArrayList;
 
 public class Ui {
 
-    public boolean handleInput(Parser parser, TaskList tasks) throws ChatBotException{
+    public boolean handleInput(Parser parser, TaskList tasks) throws ChatBotException {
 
         System.out.println("------------------------------------");
         CommandType commandType = parser.getCommandType();

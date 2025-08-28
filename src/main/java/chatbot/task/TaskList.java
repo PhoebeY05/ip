@@ -1,6 +1,8 @@
 package chatbot.task;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class TaskList {
     private final ArrayList<Task> tasks;
@@ -33,6 +35,11 @@ public class TaskList {
         return this.tasks.get(i);
     }
 
+    public TaskList filter(Predicate<Task> predicate) {
+        Stream<Task> stream = this.tasks.stream().filter(predicate);
+        ArrayList<Task> taskList = new ArrayList<>(stream.toList());
+        return new TaskList(taskList);
+    }
     @Override
     public String toString() {
         StringBuilder tasks = new StringBuilder();

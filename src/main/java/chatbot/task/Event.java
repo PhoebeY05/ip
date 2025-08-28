@@ -27,7 +27,7 @@ public class Event extends Task {
         this.to = to;
     }
 
-    public static Event toEvent(String event) {
+    public static Event toEvent(String event) throws ChatBotException {
         String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(event);
@@ -47,8 +47,9 @@ public class Event extends Task {
             }
             return eventObject;
 
+        } else {
+            throw new ChatBotException("OOPS!! This string cannot be converted to an Event object.");
         }
-        return null;
     }
 
     @Override

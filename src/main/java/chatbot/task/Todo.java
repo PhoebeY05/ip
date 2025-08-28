@@ -1,5 +1,7 @@
 package chatbot.task;
 
+import chatbot.exception.ChatBotException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +10,7 @@ public class Todo extends Task {
         super(description);
     }
 
-    public static Todo toTodo(String todo) {
+    public static Todo toTodo(String todo) throws ChatBotException {
         String regex = "^\\[T]\\[([ X])]\\s+(.*)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(todo);
@@ -20,8 +22,9 @@ public class Todo extends Task {
                 todoObject.markAsDone();
             }
             return todoObject;
+        } else {
+            throw new ChatBotException("OOPS!! This string cannot be converted to a Todo object.");
         }
-        return null;
     }
 
     @Override

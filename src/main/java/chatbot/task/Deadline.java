@@ -1,5 +1,7 @@
 package chatbot.task;
 
+import chatbot.exception.ChatBotException;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
@@ -19,7 +21,7 @@ public class Deadline extends Task {
         this.by = by;
     }
 
-    public static Deadline toDeadline(String deadline) {
+    public static Deadline toDeadline(String deadline) throws ChatBotException {
         String regex = "^\\[D]\\[([ X])]\\s+(.*?)\\s+\\(by:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(deadline);
@@ -34,8 +36,9 @@ public class Deadline extends Task {
                 deadlineObject.markAsDone();
             }
             return deadlineObject;
+        } else {
+            throw new ChatBotException("OOPS!! This string cannot be converted to a Deadline object.");
         }
-        return null;
     }
 
     @Override

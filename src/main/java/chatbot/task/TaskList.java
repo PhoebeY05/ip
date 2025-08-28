@@ -3,6 +3,7 @@ package chatbot.task;
 import java.util.ArrayList;
 
 public class TaskList {
+
     private final ArrayList<Task> tasks;
 
     public TaskList(ArrayList<Task> tasks) {
@@ -29,20 +30,23 @@ public class TaskList {
         return this.tasks.size();
     }
 
-    public Task getSpecificTask(int i) {
-        return this.tasks.get(i);
+    public Task getSpecificTask(int index) {
+        return this.tasks.get(index);
     }
 
     @Override
     public String toString() {
-        StringBuilder tasks = new StringBuilder();
+        StringBuilder tasksString = new StringBuilder();
+
         for (int i = 0; i < this.getTotalTasks(); i++) {
-            Task curr = this.tasks.get(i);
-            tasks.append(String.format("%d.%s", i + 1, curr.toString()));
+            Task currentTask = this.tasks.get(i);
+            tasksString.append(String.format("%d.%s", i + 1, currentTask.toString()));
+
             if (i < this.tasks.size() - 1) {
-                tasks.append("\n");
+                tasksString.append("\n");
             }
         }
-        return tasks.toString();
+
+        return tasksString.toString();
     }
 }

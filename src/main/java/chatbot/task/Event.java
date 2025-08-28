@@ -16,8 +16,11 @@ public class Event extends Task {
         super(description);
         this.from = LocalDateTime.parse(from, DateTimeFormatter.ofPattern("d/M/yyyy HHmm"));
         this.to = LocalDateTime.parse(to, DateTimeFormatter.ofPattern("d/M/yyyy HHmm"));
+
         if (this.from.isAfter(this.to)) {
-            throw new ChatBotException("OOPS!!! An event cannot end before it starts. Please check the dates and try again.");
+            throw new ChatBotException(
+                    "OOPS!!! An event cannot end before it starts. Please check the dates and try again."
+            );
         }
     }
 
@@ -31,31 +34,35 @@ public class Event extends Task {
         String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(event);
+
         if (matcher.matches()) {
-            boolean status = matcher.group(1).equals("X");
+            boolean isDone = matcher.group(1).equals("X");
             String description = matcher.group(2);
-            String from = matcher.group(3);
-            String to = matcher.group(4);
+            String fromString = matcher.group(3);
+            String toString = matcher.group(4);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
-            LocalDateTime fromDate = LocalDateTime.parse(from, formatter);
-            LocalDateTime toDate = LocalDateTime.parse(to, formatter);
+            LocalDateTime fromDate = LocalDateTime.parse(fromString, formatter);
+            LocalDateTime toDate = LocalDateTime.parse(toString, formatter);
 
             Event eventObject = new Event(description, fromDate, toDate);
-            if (status) {
+            if (isDone) {
                 eventObject.markAsDone();
             }
-            return eventObject;
 
+            return eventObject;
         } else {
-            throw new ChatBotException("OOPS!! This string cannot be converted to an Event object.");
+            throw new ChatBotException(
+                    "OOPS!! This string cannot be converted to an Event object."
+            );
         }
     }
 
     @Override
     public String toString() {
-        String dateFrom = this.from.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
-        String dateTo = this.to.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
-        return "[E]" + super.toString() + " (from: " + dateFrom + " to: " + dateTo + ")";
+        String formattedFrom = this.from.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
+        String formattedTo = this.to.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
+
+        return "[E]" + super.toString() + " (from: " + formattedFrom + " to: " + formattedTo + ")";
     }
 }

@@ -25,25 +25,31 @@ public class Deadline extends Task {
         String regex = "^\\[D]\\[([ X])]\\s+(.*?)\\s+\\(by:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(deadline);
+
         if (matcher.matches()) {
-            boolean status = matcher.group(1).equals("X");
+            boolean isDone = matcher.group(1).equals("X");
             String description = matcher.group(2);
-            String by = matcher.group(3);
-            LocalDateTime byDate = LocalDateTime.parse(by, DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
+            String byString = matcher.group(3);
+            LocalDateTime byDate = LocalDateTime.parse(
+                    byString, DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm")
+            );
 
             Deadline deadlineObject = new Deadline(description, byDate);
-            if (status) {
+            if (isDone) {
                 deadlineObject.markAsDone();
             }
+
             return deadlineObject;
         } else {
-            throw new ChatBotException("OOPS!! This string cannot be converted to a Deadline object.");
+            throw new ChatBotException(
+                    "OOPS!! This string cannot be converted to a Deadline object."
+            );
         }
     }
 
     @Override
     public String toString() {
-        String dateBy = this.by.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
-        return "[D]" + super.toString() + " (by: " + dateBy + ")";
+        String formattedBy = this.by.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
+        return "[D]" + super.toString() + " (by: " + formattedBy + ")";
     }
 }

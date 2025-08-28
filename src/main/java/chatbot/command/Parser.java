@@ -72,10 +72,10 @@ public class Parser {
         try {
             i = Integer.parseInt(parts[1]);
         } catch (NumberFormatException e) {
-            throw new ChatBotException("OOPS!!! chatbot.task.Task number must be a valid integer.");
+            throw new ChatBotException("OOPS!!! Task number must be a valid integer.");
         }
         if (i < 1 || i > tasks.getTotalTasks()) {
-            throw new ChatBotException("OOPS!!! chatbot.task.Task does not exist.");
+            throw new ChatBotException("OOPS!!! Task does not exist.");
         }
         return tasks.getSpecificTask(i - 1);
     }

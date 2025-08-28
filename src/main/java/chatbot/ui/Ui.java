@@ -126,7 +126,7 @@ public class Ui {
     /**
      * Displays a confirmation that a task has been marked as not done.
      *
-     * @param t The task that was marked as undone.
+     * @param task The task that was marked as undone.
      */
     public void showMarkedAsUndone(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");

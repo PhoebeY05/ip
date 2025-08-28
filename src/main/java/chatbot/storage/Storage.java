@@ -1,7 +1,11 @@
 package chatbot.storage;
 
 import chatbot.exception.ChatBotException;
-import chatbot.task.*;
+import chatbot.task.Deadline;
+import chatbot.task.Event;
+import chatbot.task.Task;
+import chatbot.task.TaskList;
+import chatbot.task.Todo;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,11 +56,12 @@ public class Storage {
      * @param tasks The {@link TaskList} containing tasks to be saved.
      */
     public void saveToStorage(TaskList tasks) {
-        File f = new File(this.filePath);
-        try (FileWriter fw = new FileWriter(f, false)) { // false = overwrite
-            for (Task t : tasks.getTasks()) {
-                if (t != null) {
-                    fw.write(t + System.lineSeparator());
+        File file = new File(this.filePath);
+
+        try (FileWriter writer = new FileWriter(file, false)) { // false = overwrite
+            for (Task task : tasks.getTasks()) {
+                if (task != null) {
+                    writer.write(task + System.lineSeparator());
                 }
             }
         } catch (Exception e) {
@@ -81,10 +86,11 @@ public class Storage {
         ArrayList<Task> tasks = new ArrayList<>();
 
         try {
-            File f = new File(this.filePath);
-            Scanner myReader = new Scanner(f);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
+            File file = new File(this.filePath);
+            Scanner reader = new Scanner(file);
+
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
                 if (data.trim().isEmpty()) {
                     break;
                 }
@@ -102,10 +108,12 @@ public class Storage {
                     throw new ChatBotException("OOPS!! Data file has unknown line!");
                 }
             }
-            myReader.close();
+
+            reader.close();
         } catch (Exception e) {
             throw new ChatBotException(e.getMessage());
         }
+
         return tasks;
     }
 }

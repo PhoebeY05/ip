@@ -9,6 +9,7 @@ import java.util.stream.Stream;
  * Provides methods to add, remove, retrieve, and display tasks.
  */
 public class TaskList {
+
     private final ArrayList<Task> tasks;
 
     /**
@@ -66,12 +67,12 @@ public class TaskList {
     /**
      * Retrieves a task at the specified index.
      *
-     * @param i Zero-based index of the task.
+     * @param index Zero-based index of the task.
      * @return The {@link Task} at the given index.
      * @throws IndexOutOfBoundsException If the index is out of range.
      */
-    public Task getSpecificTask(int i) {
-        return this.tasks.get(i);
+    public Task getSpecificTask(int index) {
+        return this.tasks.get(index);
     }
 
     /**
@@ -99,14 +100,17 @@ public class TaskList {
      */
     @Override
     public String toString() {
-        StringBuilder tasks = new StringBuilder();
+        StringBuilder tasksString = new StringBuilder();
+
         for (int i = 0; i < this.getTotalTasks(); i++) {
-            Task curr = this.tasks.get(i);
-            tasks.append(String.format("%d.%s", i + 1, curr.toString()));
+            Task currentTask = this.tasks.get(i);
+            tasksString.append(String.format("%d.%s", i + 1, currentTask.toString()));
+
             if (i < this.tasks.size() - 1) {
-                tasks.append("\n");
+                tasksString.append("\n");
             }
         }
-        return tasks.toString();
+
+        return tasksString.toString();
     }
 }

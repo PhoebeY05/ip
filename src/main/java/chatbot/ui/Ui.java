@@ -26,8 +26,8 @@ public class Ui {
      * @throws ChatBotException If the command is unrecognized or the arguments are invalid.
      */
     public boolean handleInput(Parser parser, TaskList tasks) throws ChatBotException {
-
         System.out.println("------------------------------------");
+
         CommandType commandType = parser.getCommandType();
         Task addedTask = null;
         ArrayList<String> args = parser.getArguments();
@@ -36,36 +36,44 @@ public class Ui {
             case BYE:
                 this.endConversation();
                 return false;
+
             case LIST:
                 this.listTasks(tasks);
                 break;
+
             case MARK:
-                Task tDone = parser.getTask(tasks);
-                tDone.markAsDone();
-                this.showMarkedAsDone(tDone);
+                Task taskToMark = parser.getTask(tasks);
+                taskToMark.markAsDone();
+                this.showMarkedAsDone(taskToMark);
                 break;
+
             case UNMARK:
-                Task tUndone = parser.getTask(tasks);
-                tUndone.markAsUndone();
-                this.showMarkedAsUndone(tUndone);
+                Task taskToUnmark = parser.getTask(tasks);
+                taskToUnmark.markAsUndone();
+                this.showMarkedAsUndone(taskToUnmark);
                 break;
+
             case DELETE:
-                Task tDeleted = parser.getTask(tasks);
-                tasks.deleteTask(tDeleted);
-                this.showDeleted(tDeleted, tasks.getTotalTasks());
+                Task taskToDelete = parser.getTask(tasks);
+                tasks.deleteTask(taskToDelete);
+                this.showDeleted(taskToDelete, tasks.getTotalTasks());
                 break;
+
             case TODO:
                 System.out.println("Got it. I've added this task:");
                 addedTask = new Todo(args.get(0));
                 break;
+
             case DEADLINE:
                 System.out.println("Got it. I've added this task:");
                 addedTask = new Deadline(args.get(0), args.get(1));
                 break;
+
             case EVENT:
                 System.out.println("Got it. I've added this task:");
                 addedTask = new Event(args.get(0), args.get(1), args.get(2));
                 break;
+
             case FIND:
                 System.out.println("Here are the matching tasks in your list:");
                 String regex = "\\b" + args.get(0) + "\\b";
@@ -74,7 +82,9 @@ public class Ui {
                 System.out.println(filteredTaskList);
                 break;
             default:
-                throw new ChatBotException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+                throw new ChatBotException(
+                        "OOPS!!! I'm sorry, but I don't know what that means :-("
+                );
         }
 
         if (addedTask != null) {
@@ -106,11 +116,11 @@ public class Ui {
     /**
      * Displays a confirmation that a task has been marked as done.
      *
-     * @param t The task that was marked as done.
+     * @param task The task that was marked as done.
      */
-    public void showMarkedAsDone(Task t) {
+    public void showMarkedAsDone(Task task) {
         System.out.println("Nice! I've marked this task as done:");
-        System.out.println(t);
+        System.out.println(task);
     }
 
     /**
@@ -118,34 +128,33 @@ public class Ui {
      *
      * @param t The task that was marked as undone.
      */
-    public void showMarkedAsUndone(Task t) {
+    public void showMarkedAsUndone(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println(t);
+        System.out.println(task);
     }
 
     /**
      * Displays a confirmation that a task has been deleted and
      * shows the updated number of tasks remaining.
      *
-     * @param t    The task that was deleted.
-     * @param size The updated size of the task list.
+     * @param task    The task that was deleted.
+     * @param totalTasks The updated size of the task list.
      */
-    public void showDeleted(Task t, int size) {
+    public void showDeleted(Task task, int totalTasks) {
         System.out.println("Noted. I've removed this task:");
-        System.out.println(t);
-        System.out.printf("Now you have %d task(s) in the list.\n", size);
+        System.out.println(task);
+        System.out.printf("Now you have %d task(s) in the list.\n", totalTasks);
     }
-
     /**
      * Displays a confirmation that a task has been added and
      * shows the updated number of tasks in the list.
      *
-     * @param t    The task that was added.
-     * @param size The updated size of the task list.
+     * @param task    The task that was added.
+     * @param totalTasks The updated size of the task list.
      */
-    public void showAddedTask(Task t, int size) {
-        System.out.println(t);
-        System.out.printf("Now you have %d task(s) in the list.\n", size);
+    public void showAddedTask(Task task, int totalTasks) {
+        System.out.println(task);
+        System.out.printf("Now you have %d task(s) in the list.\n", totalTasks);
     }
 
     /**

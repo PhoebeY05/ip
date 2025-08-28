@@ -30,24 +30,29 @@ public class Todo extends Task {
      * [T][X] description
      * </pre>
      *
-     * @param todo Serialized todo string.
+     * @param todoString Serialized todo string.
      * @return A {@link Todo} object reconstructed from the string.
      * @throws ChatBotException If the string does not match the expected format.
      */
-    public static Todo toTodo(String todo) throws ChatBotException {
+    public static Todo toTodo(String todoString) throws ChatBotException {
         String regex = "^\\[T]\\[([ X])]\\s+(.*)$";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(todo);
+        Matcher matcher = pattern.matcher(todoString);
+
         if (matcher.matches()) {
-            boolean status = matcher.group(1).equals("X");
+            boolean isDone = matcher.group(1).equals("X");
             String description = matcher.group(2);
+
             Todo todoObject = new Todo(description);
-            if (status) {
+            if (isDone) {
                 todoObject.markAsDone();
             }
+
             return todoObject;
         } else {
-            throw new ChatBotException("OOPS!! This string cannot be converted to a Todo object.");
+            throw new ChatBotException(
+                    "OOPS!! This string cannot be converted to a Todo object."
+            );
         }
     }
 

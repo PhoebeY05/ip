@@ -4,10 +4,10 @@ import chatbot.exception.ChatBotException;
 import chatbot.task.Task;
 import chatbot.task.TaskList;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
 
 public class Parser {
 
@@ -68,21 +68,25 @@ public class Parser {
         if (parts.length < 2) {
             throw new ChatBotException("OOPS!!! You need to specify a task number.");
         }
-        int i;
+
+        int taskIndex;
         try {
-            i = Integer.parseInt(parts[1]);
+            taskIndex = Integer.parseInt(parts[1]);
         } catch (NumberFormatException e) {
             throw new ChatBotException("OOPS!!! Task number must be a valid integer.");
         }
-        if (i < 1 || i > tasks.getTotalTasks()) {
+
+        if (taskIndex < 1 || taskIndex > tasks.getTotalTasks()) {
             throw new ChatBotException("OOPS!!! Task does not exist.");
         }
-        return tasks.getSpecificTask(i - 1);
+
+        return tasks.getSpecificTask(taskIndex - 1);
     }
 
     public ArrayList<String> getArguments() throws ChatBotException {
         ArrayList<String> args = new ArrayList<>();
         String description;
+
         switch (command) {
             case TODO:
                 description = this.todoMatcher.group(1).trim();
@@ -91,23 +95,26 @@ public class Parser {
                 }
                 args.add(description);
                 break;
+
             case DEADLINE:
                 description = this.deadlineMatcher.group(1).trim();
                 if (description.isEmpty()) {
                     throw new ChatBotException("OOPS!!! The description of a deadline task cannot be empty.");
                 }
-                String by = deadlineMatcher.group(2).trim();
+                String by = this.deadlineMatcher.group(2).trim();
                 Collections.addAll(args, description, by);
                 break;
+
             case EVENT:
                 description = this.eventMatcher.group(1).trim();
                 if (description.isEmpty()) {
                     throw new ChatBotException("OOPS!!! The description of an event task cannot be empty.");
                 }
-                String from = eventMatcher.group(2).trim();
-                String to = eventMatcher.group(3).trim();
+                String from = this.eventMatcher.group(2).trim();
+                String to = this.eventMatcher.group(3).trim();
                 Collections.addAll(args, description, from, to);
                 break;
+
             default:
                 break;
         }

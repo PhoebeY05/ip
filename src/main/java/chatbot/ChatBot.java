@@ -17,6 +17,7 @@ public class ChatBot {
     public ChatBot(String filePath) {
         ui = new Ui();
         storage = new Storage(filePath);
+
         try {
             tasks = new TaskList(storage.load());
         } catch (ChatBotException e) {
@@ -39,6 +40,7 @@ public class ChatBot {
 
             String input = scanner.nextLine();
             Parser parser = new Parser(input);
+
             try {
                 if (!ui.handleInput(parser, tasks)) {
                     break;

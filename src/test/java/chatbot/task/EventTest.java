@@ -11,7 +11,7 @@ public class EventTest {
     public void stringToDeadline_eventMissingArguments_exceptionThrown() {
         String input = "event project meeting /from  /to ";
         try {
-            Event event = Event.toEvent(input);
+            Event.toEvent(input);
             fail();
         } catch (Exception e) {
             assertEquals("OOPS!! This string cannot be converted to an Event object.", e.getMessage());

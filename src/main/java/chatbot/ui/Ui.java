@@ -52,7 +52,7 @@ public class Ui {
                 addedTask = new Event(args.get(0), args.get(1), args.get(2));
                 break;
             case FIND:
-                System.out.println("Here are the matching tasks in your list: ");
+                System.out.println("Here are the matching tasks in your list:");
                 String regex = "\\b" + args.get(0) + "\\b";
                 Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
                 TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());

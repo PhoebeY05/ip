@@ -17,6 +17,7 @@ public class Parser {
     private final Matcher todoMatcher;
     private final Matcher deadlineMatcher;
     private final Matcher eventMatcher;
+    private final Matcher findMatcher;
 
     public Parser(String input) {
         this.input = input;
@@ -27,6 +28,7 @@ public class Parser {
         String deadlineRegex = "^deadline (.*) /by (.+)";
         String eventRegex = "^event (.*) /from (.+) /to (.+)$";
         String deleteRegex = "^delete \\d+";
+        String findRegex = "^find (.*)";
 
         // Prep for extracting regex
         Pattern todoPattern = Pattern.compile(todoRegex);
@@ -37,6 +39,9 @@ public class Parser {
 
         Pattern eventPattern = Pattern.compile(eventRegex);
         this.eventMatcher = eventPattern.matcher(input);
+
+        Pattern findPattern = Pattern.compile(findRegex);
+        this.findMatcher = findPattern.matcher(input);
 
         if (input.equals("bye")) {
             this.command = CommandType.BYE;
@@ -54,6 +59,8 @@ public class Parser {
             this.command = CommandType.DEADLINE;
         } else if (eventMatcher.matches()) {
             this.command = CommandType.EVENT;
+        } else if (findMatcher.matches()) {
+            this.command = CommandType.FIND;
         } else {
             this.command = CommandType.UNKNOWN;
         }
@@ -107,6 +114,13 @@ public class Parser {
                 String from = eventMatcher.group(2).trim();
                 String to = eventMatcher.group(3).trim();
                 Collections.addAll(args, description, from, to);
+                break;
+            case FIND:
+                String searchTerm = this.findMatcher.group(1).trim();
+                if (searchTerm.isEmpty()) {
+                    throw new ChatBotException("OOPS!!! It looks like you didn’t enter a search term.");
+                }
+                args.add(searchTerm);
                 break;
             default:
                 break;

@@ -1,13 +1,14 @@
 package chatbot.command;
 
-import chatbot.exception.ChatBotException;
-import chatbot.task.Task;
-import chatbot.task.TaskList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import chatbot.exception.ChatBotException;
+import chatbot.task.Task;
+import chatbot.task.TaskList;
+
 
 /**
  * Parses user input into a recognized chatbot command.
@@ -136,42 +137,42 @@ public class Parser {
         String description;
 
         switch (command) {
-            case TODO:
-                description = this.todoMatcher.group(1).trim();
-                if (description.isEmpty()) {
-                    throw new ChatBotException("OOPS!!! The description of a todo task cannot be empty.");
-                }
-                args.add(description);
-                break;
+        case TODO:
+            description = this.todoMatcher.group(1).trim();
+            if (description.isEmpty()) {
+                throw new ChatBotException("OOPS!!! The description of a todo task cannot be empty.");
+            }
+            args.add(description);
+            break;
 
-            case DEADLINE:
-                description = this.deadlineMatcher.group(1).trim();
-                if (description.isEmpty()) {
-                    throw new ChatBotException("OOPS!!! The description of a deadline task cannot be empty.");
-                }
-                String by = this.deadlineMatcher.group(2).trim();
-                Collections.addAll(args, description, by);
-                break;
+        case DEADLINE:
+            description = this.deadlineMatcher.group(1).trim();
+            if (description.isEmpty()) {
+                throw new ChatBotException("OOPS!!! The description of a deadline task cannot be empty.");
+            }
+            String by = this.deadlineMatcher.group(2).trim();
+            Collections.addAll(args, description, by);
+            break;
 
-            case EVENT:
-                description = this.eventMatcher.group(1).trim();
-                if (description.isEmpty()) {
-                    throw new ChatBotException("OOPS!!! The description of an event task cannot be empty.");
-                }
-                String from = this.eventMatcher.group(2).trim();
-                String to = this.eventMatcher.group(3).trim();
-                Collections.addAll(args, description, from, to);
-                break;
-            case FIND:
-                String searchTerm = this.findMatcher.group(1).trim();
-                if (searchTerm.isEmpty()) {
-                    throw new ChatBotException("OOPS!!! It looks like you didn’t enter a search term.");
-                }
-                args.add(searchTerm);
-                break;
+        case EVENT:
+            description = this.eventMatcher.group(1).trim();
+            if (description.isEmpty()) {
+                throw new ChatBotException("OOPS!!! The description of an event task cannot be empty.");
+            }
+            String from = this.eventMatcher.group(2).trim();
+            String to = this.eventMatcher.group(3).trim();
+            Collections.addAll(args, description, from, to);
+            break;
+        case FIND:
+            String searchTerm = this.findMatcher.group(1).trim();
+            if (searchTerm.isEmpty()) {
+                throw new ChatBotException("OOPS!!! It looks like you didn’t enter a search term.");
+            }
+            args.add(searchTerm);
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
 
         return args;

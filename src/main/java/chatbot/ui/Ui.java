@@ -1,12 +1,16 @@
 package chatbot.ui;
 
-import chatbot.exception.ChatBotException;
-import chatbot.task.*;
-import chatbot.command.CommandType;
-import chatbot.command.Parser;
-
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+
+import chatbot.command.CommandType;
+import chatbot.command.Parser;
+import chatbot.exception.ChatBotException;
+import chatbot.task.Deadline;
+import chatbot.task.Event;
+import chatbot.task.Task;
+import chatbot.task.TaskList;
+import chatbot.task.Todo;
 
 /**
  * Handles all interactions with the user by printing messages to the console.
@@ -33,58 +37,58 @@ public class Ui {
         ArrayList<String> args = parser.getArguments();
 
         switch (commandType) {
-            case BYE:
-                this.endConversation();
-                return false;
+        case BYE:
+            this.endConversation();
+            return false;
 
-            case LIST:
-                this.listTasks(tasks);
-                break;
+        case LIST:
+            this.listTasks(tasks);
+            break;
 
-            case MARK:
-                Task taskToMark = parser.getTask(tasks);
-                taskToMark.markAsDone();
-                this.showMarkedAsDone(taskToMark);
-                break;
+        case MARK:
+            Task taskToMark = parser.getTask(tasks);
+            taskToMark.markAsDone();
+            this.showMarkedAsDone(taskToMark);
+            break;
 
-            case UNMARK:
-                Task taskToUnmark = parser.getTask(tasks);
-                taskToUnmark.markAsUndone();
-                this.showMarkedAsUndone(taskToUnmark);
-                break;
+        case UNMARK:
+            Task taskToUnmark = parser.getTask(tasks);
+            taskToUnmark.markAsUndone();
+            this.showMarkedAsUndone(taskToUnmark);
+            break;
 
-            case DELETE:
-                Task taskToDelete = parser.getTask(tasks);
-                tasks.deleteTask(taskToDelete);
-                this.showDeleted(taskToDelete, tasks.getTotalTasks());
-                break;
+        case DELETE:
+            Task taskToDelete = parser.getTask(tasks);
+            tasks.deleteTask(taskToDelete);
+            this.showDeleted(taskToDelete, tasks.getTotalTasks());
+            break;
 
-            case TODO:
-                System.out.println("Got it. I've added this task:");
-                addedTask = new Todo(args.get(0));
-                break;
+        case TODO:
+            System.out.println("Got it. I've added this task:");
+            addedTask = new Todo(args.get(0));
+            break;
 
-            case DEADLINE:
-                System.out.println("Got it. I've added this task:");
-                addedTask = new Deadline(args.get(0), args.get(1));
-                break;
+        case DEADLINE:
+            System.out.println("Got it. I've added this task:");
+            addedTask = new Deadline(args.get(0), args.get(1));
+            break;
 
-            case EVENT:
-                System.out.println("Got it. I've added this task:");
-                addedTask = new Event(args.get(0), args.get(1), args.get(2));
-                break;
+        case EVENT:
+            System.out.println("Got it. I've added this task:");
+            addedTask = new Event(args.get(0), args.get(1), args.get(2));
+            break;
 
-            case FIND:
-                System.out.println("Here are the matching tasks in your list:");
-                String regex = "\\b" + args.get(0) + "\\b";
-                Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-                TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());
-                System.out.println(filteredTaskList);
-                break;
-            default:
-                throw new ChatBotException(
-                        "OOPS!!! I'm sorry, but I don't know what that means :-("
-                );
+        case FIND:
+            System.out.println("Here are the matching tasks in your list:");
+            String regex = "\\b" + args.get(0) + "\\b";
+            Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+            TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());
+            System.out.println(filteredTaskList);
+            break;
+        default:
+            throw new ChatBotException(
+                    "OOPS!!! I'm sorry, but I don't know what that means :-("
+            );
         }
 
         if (addedTask != null) {

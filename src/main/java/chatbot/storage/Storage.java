@@ -1,12 +1,5 @@
 package chatbot.storage;
 
-import chatbot.exception.ChatBotException;
-import chatbot.task.Deadline;
-import chatbot.task.Event;
-import chatbot.task.Task;
-import chatbot.task.TaskList;
-import chatbot.task.Todo;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +8,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import chatbot.exception.ChatBotException;
+import chatbot.task.Deadline;
+import chatbot.task.Event;
+import chatbot.task.Task;
+import chatbot.task.TaskList;
+import chatbot.task.Todo;
 
 /**
  * Handles the saving and loading of tasks to and from hard drive.

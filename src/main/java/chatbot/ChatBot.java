@@ -1,12 +1,12 @@
 package chatbot;
 
+import java.util.Scanner;
+
+import chatbot.command.Parser;
 import chatbot.exception.ChatBotException;
 import chatbot.storage.Storage;
 import chatbot.task.TaskList;
 import chatbot.ui.Ui;
-import chatbot.command.Parser;
-
-import java.util.Scanner;
 
 /**
  * The main class for the ChatBot application.

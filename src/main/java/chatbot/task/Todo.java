@@ -1,9 +1,9 @@
 package chatbot.task;
 
-import chatbot.exception.ChatBotException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import chatbot.exception.ChatBotException;
 
 /**
  * Represents a task of type "Todo".

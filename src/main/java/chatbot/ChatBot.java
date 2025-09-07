@@ -32,9 +32,8 @@ public class ChatBot {
         try {
             tasks = new TaskList(storage.load());
         } catch (ChatBotException e) {
-            ui.showLoadingError();
-            System.out.println(e.getMessage());
             tasks = new TaskList();
+            System.out.println(ui.showLoadingError(e));
         }
     }
 
@@ -46,26 +45,12 @@ public class ChatBot {
      * The task list is saved to storage after each user input.
      */
     public void run() {
-        System.out.println("------------------------------------");
-        System.out.println("Hello! I'm ChatBot!");
-        System.out.println("What can I do for you?");
-        System.out.println("------------------------------------");
-
+        System.out.println(ui.showWelcomeMessage());
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            storage.saveToStorage(tasks);
-
             String input = scanner.nextLine();
-            Parser parser = new Parser(input);
-
-            try {
-                if (!ui.handleInput(parser, tasks)) {
-                    break;
-                }
-            } catch (ChatBotException e) {
-                System.out.println(e.getMessage());
-            }
+            System.out.println(this.getResponse(input));
         }
     }
 
@@ -83,6 +68,14 @@ public class ChatBot {
      * Generates a response for the user's chat message.
      */
     public String getResponse(String input) {
-        return "ChatBot heard: " + input;
+        storage.saveToStorage(tasks);
+
+        Parser parser = new Parser(input);
+
+        try {
+            return ui.handleInput(parser, tasks);
+        } catch (ChatBotException e) {
+            return e.getMessage();
+        }
     }
 }

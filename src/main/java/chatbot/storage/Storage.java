@@ -96,13 +96,13 @@ public class Storage {
                 }
 
                 if (data.startsWith("[T]")) {
-                    Todo todo = Todo.toTodo(data);
+                    Todo todo = Todo.convertToTodo(data);
                     tasks.add(todo);
                 } else if (data.startsWith("[D]")) {
-                    Deadline deadline = Deadline.toDeadline(data);
+                    Deadline deadline = Deadline.convertToDeadline(data);
                     tasks.add(deadline);
                 } else if (data.startsWith("[E]")) {
-                    Event event = Event.toEvent(data);
+                    Event event = Event.convertToEvent(data);
                     tasks.add(event);
                 } else {
                     throw new ChatBotException("OOPS!! Data file has unknown line!");

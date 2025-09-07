@@ -64,7 +64,7 @@ public class Event extends Task {
      * @return An {@link Event} object reconstructed from the string.
      * @throws ChatBotException If the string does not match the expected format.
      */
-    public static Event toEvent(String event) throws ChatBotException {
+    public static Event convertToEvent(String event) throws ChatBotException {
         String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(event);

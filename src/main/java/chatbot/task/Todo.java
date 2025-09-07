@@ -34,7 +34,7 @@ public class Todo extends Task {
      * @return A {@link Todo} object reconstructed from the string.
      * @throws ChatBotException If the string does not match the expected format.
      */
-    public static Todo toTodo(String todoString) throws ChatBotException {
+    public static Todo convertToTodo(String todoString) throws ChatBotException {
         String regex = "^\\[T]\\[([ X])]\\s+(.*)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(todoString);

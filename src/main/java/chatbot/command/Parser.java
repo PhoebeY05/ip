@@ -2,12 +2,13 @@ package chatbot.command;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import chatbot.exception.ChatBotException;
-import chatbot.task.Task;
-import chatbot.task.TaskList;
+import chatbot.task.*;
+import chatbot.ui.Ui;
 
 
 /**
@@ -79,6 +80,73 @@ public class Parser {
         }
     }
 
+
+    /**
+     * Processes user input by interpreting the parsed command
+     * and updating the task list accordingly.
+     * Terminates the main {@code while(true)} loop if the {@code BYE} command is given.
+     *
+     * @param tasks  The current task list.
+     * @return {@code false} if the command is {@link CommandType#BYE}, otherwise {@code true}.
+     * @throws ChatBotException If the command is unrecognized or the arguments are invalid.
+     */
+    public String handleInput(TaskList tasks, Ui ui) throws ChatBotException {
+        CommandType commandType = this.getCommandType();
+        Task addedTask = null;
+        List<String> args = this.getArguments();
+
+        switch (commandType) {
+            case BYE:
+                return ui.endConversation();
+
+            case LIST:
+                return ui.listTasks(tasks);
+
+            case MARK:
+                Task taskToMark = this.getTask(tasks);
+                taskToMark.markAsDone();
+                return ui.showMarkedAsDone(taskToMark);
+
+            case UNMARK:
+                Task taskToUnmark = this.getTask(tasks);
+                taskToUnmark.markAsUndone();
+                return ui.showMarkedAsUndone(taskToUnmark);
+
+            case DELETE:
+                Task taskToDelete = this.getTask(tasks);
+                tasks.deleteTask(taskToDelete);
+                return ui.showDeleted(taskToDelete, tasks.getTotalTasks());
+
+            case TODO:
+                addedTask = new Todo(args.get(0));
+                break;
+
+            case DEADLINE:
+                addedTask = new Deadline(args.get(0), args.get(1));
+                break;
+
+            case EVENT:
+                addedTask = new Event(args.get(0), args.get(1), args.get(2));
+                break;
+
+            case FIND:
+                String regex = "\\b" + args.get(0) + "\\b";
+                Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());
+                return ui.showFindResult(filteredTaskList);
+            default:
+                throw new ChatBotException(
+                        "OOPS!!! I'm sorry, but I don't know what that means :-("
+                );
+        }
+
+        if (addedTask != null) {
+            tasks.addTask(addedTask);
+            return ui.showAddedTask(addedTask, tasks.getTotalTasks());
+        }
+        return "";
+    }
+
     /**
      * Returns the type of command identified from the user input.
      *
@@ -132,8 +200,8 @@ public class Parser {
      * @throws ChatBotException If mandatory fields such as description
      *                          are missing or empty.
      */
-    public ArrayList<String> getArguments() throws ChatBotException {
-        ArrayList<String> args = new ArrayList<>();
+    public List<String> getArguments() throws ChatBotException {
+        List<String> args = new ArrayList<>();
         String description;
 
         switch (command) {

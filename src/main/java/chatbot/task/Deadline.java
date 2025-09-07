@@ -51,7 +51,7 @@ public class Deadline extends Task {
      * @return A {@link Deadline} object reconstructed from the string.
      * @throws ChatBotException If the string does not match the expected format.
      */
-    public static Deadline toDeadline(String deadline) throws ChatBotException {
+    public static Deadline convertToDeadline(String deadline) throws ChatBotException {
         String regex = "^\\[D]\\[([ X])]\\s+(.*?)\\s+\\(by:\\s+(.+)\\)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(deadline);

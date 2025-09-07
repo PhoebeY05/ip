@@ -73,7 +73,7 @@ public class ChatBot {
         Parser parser = new Parser(input);
 
         try {
-            return ui.handleInput(parser, tasks);
+            return parser.handleInput(tasks, ui);
         } catch (ChatBotException e) {
             return e.getMessage();
         }

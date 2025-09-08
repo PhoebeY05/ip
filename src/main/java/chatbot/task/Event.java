@@ -14,17 +14,22 @@ import chatbot.exception.ChatBotException;
  */
 public class Event extends Task {
 
-    protected LocalDateTime from; // Event start time
-    protected LocalDateTime to;   // Event end time
+    /** Start time of the event. */
+    protected LocalDateTime from;
 
+    /** End time of the event. */
+    protected LocalDateTime to;
+
+    /** Formatter for parsing user input dates. */
     private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+
+    /** Formatter for displaying dates in task output. */
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
 
     /**
-     * Constructs an Event task with the given description, start time (string), and end time (string).
-     * Ensures that the start time is not after the end time.
+     * Constructs an Event task with the given description and time range.
      *
-     * @param description Description of the event task.
+     * @param description Description of the event.
      * @param from Start time in {@code d/M/yyyy HHmm} format.
      * @param to End time in {@code d/M/yyyy HHmm} format.
      * @throws ChatBotException If the start time is after the end time.
@@ -42,11 +47,11 @@ public class Event extends Task {
     }
 
     /**
-     * Constructs an Event task with the given description, start time, and end time.
+     * Constructs an Event task with the given description and time range.
      *
-     * @param description Description of the event task.
-     * @param from Start time as a {@link LocalDateTime}.
-     * @param to End time as a {@link LocalDateTime}.
+     * @param description Description of the event.
+     * @param from Start time.
+     * @param to End time.
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
@@ -55,97 +60,108 @@ public class Event extends Task {
     }
 
     /**
-     * Converts a serialized string back into an {@link Event} object.
-     * The string must match the format produced by {@link #toString()}.
+     * Converts a serialized event string back into an {@link Event}.
      *
      * @param event Serialized event string.
-     * @return An {@link Event} object reconstructed from the string.
+     * @return Reconstructed Event object.
      * @throws ChatBotException If the string does not match the expected format.
      */
     public static Event convertToEvent(String event) throws ChatBotException {
-        // Regex matches: [E][ ] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
         String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$";
         Matcher matcher = Pattern.compile(regex).matcher(event);
 
         if (!matcher.matches()) {
-            throw new ChatBotException(
-                    "OOPS!! This string cannot be converted to an Event object."
-            );
+            throw new ChatBotException("OOPS!! This string cannot be converted to an Event object.");
         }
 
-        boolean isDone = matcher.group(1).equals("X");   // Check if event is marked done
-        String description = matcher.group(2).trim();    // Extract description
-        String fromString = matcher.group(3).trim();     // Extract start time
-        String toString = matcher.group(4).trim();       // Extract end time
+        boolean isDone = matcher.group(1).equals("X");
+        String description = matcher.group(2).trim();
+        String fromString = matcher.group(3).trim();
+        String toString = matcher.group(4).trim();
 
         LocalDateTime fromDate = LocalDateTime.parse(fromString, OUTPUT_FORMAT);
         LocalDateTime toDate = LocalDateTime.parse(toString, OUTPUT_FORMAT);
 
         Event eventObject = new Event(description, fromDate, toDate);
         if (isDone) {
-            eventObject.markAsDone(); // Restore completion status
+            eventObject.markAsDone();
         }
 
         return eventObject;
     }
 
+    /**
+     * Returns the start time of the event.
+     *
+     * @return Start time.
+     */
     public LocalDateTime getFrom() {
         return this.from;
     }
 
+    /**
+     * Returns the end time of the event.
+     *
+     * @return End time.
+     */
     public LocalDateTime getTo() {
         return this.to;
     }
 
+    /**
+     * Merges overlapping events from a sorted task list into continuous time ranges.
+     * <p>Assumes the given task list contains only {@link Event} objects, sorted by start time.</p>
+     *
+     * @param sorted Task list of events, sorted by start time.
+     * @return List of merged time ranges as {@code LocalDateTime[]} pairs.
+     */
     public static ArrayList<LocalDateTime[]> mergeOverlappingEvents(TaskList sorted) {
         int n = sorted.getTotalTasks();
+        ArrayList<LocalDateTime[]> merged = new ArrayList<>();
 
-        ArrayList<LocalDateTime[]> res = new ArrayList<>();
-
-        // Checking for all possible overlaps
         for (int i = 0; i < n; i++) {
             Task task = sorted.getSpecificTask(i);
-            assert task.getClass().getName().equals("chatbot.task.Event");
+            assert task instanceof Event : "Non-event task found in mergeOverlappingEvents";
 
             Event event = (Event) task;
             LocalDateTime start = event.getFrom();
             LocalDateTime end = event.getTo();
 
-            // Skipping already merged intervals
-            boolean isEmpty = res.isEmpty();
-            boolean isNotBeforeEnd = !isEmpty && !res.get(res.size() - 1)[1].isBefore(end);
-            if (isNotBeforeEnd) {
+            // Skip if already covered by previous merged interval
+            if (!merged.isEmpty() && !merged.get(merged.size() - 1)[1].isBefore(end)) {
                 continue;
             }
 
-            // Find the end of the merged range
+            // Extend the interval with overlapping events
             for (int j = i + 1; j < n; j++) {
-                Task curr = sorted.getSpecificTask(j);
-                assert curr.getClass().getName().equals("chatbot.task.Event");
+                Task nextTask = sorted.getSpecificTask(j);
+                assert nextTask instanceof Event : "Non-event task found in mergeOverlappingEvents";
 
-                Event currEvent = (Event) curr;
-                boolean isAfterEnd = currEvent.getFrom().isAfter(end);
-                if (!isAfterEnd) {
-                    end = end.isAfter(currEvent.getTo()) ? end : currEvent.getTo();
+                Event nextEvent = (Event) nextTask;
+                if (nextEvent.getFrom().isAfter(end)) {
+                    break; // no overlap
                 }
+                end = end.isAfter(nextEvent.getTo()) ? end : nextEvent.getTo();
             }
-            res.add(new LocalDateTime[]{start, end});
+
+            merged.add(new LocalDateTime[]{start, end});
         }
-        return res;
+        return merged;
     }
 
-
     /**
-     * Returns the string representation of the event task in the format:
-     * [E][ ] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
+     * Returns the string representation of the event.
+     * Example:
+     * <pre>
+     * [E][ ] project meeting (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
+     * </pre>
      *
-     * @return String representation of the event task.
+     * @return String representation of the event.
      */
     @Override
     public String toString() {
         String formattedFrom = this.from.format(OUTPUT_FORMAT);
         String formattedTo = this.to.format(OUTPUT_FORMAT);
-
         return "[E]" + super.toString() + " (from: " + formattedFrom + " to: " + formattedTo + ")";
     }
 }

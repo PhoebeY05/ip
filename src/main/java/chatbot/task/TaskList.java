@@ -1,6 +1,7 @@
 package chatbot.task;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -87,6 +88,12 @@ public class TaskList {
         Stream<Task> filteredStream = this.tasks.stream().filter(predicate);
         ArrayList<Task> filteredTasks = new ArrayList<>(filteredStream.toList());
         return new TaskList(filteredTasks);
+    }
+
+    public TaskList sort(Comparator<Task> comparator) {
+        Stream<Task> sortedStream = this.tasks.stream().sorted(comparator);
+        ArrayList<Task> sortedTasks = new ArrayList<>(sortedStream.toList());
+        return new TaskList(sortedTasks);
     }
 
     /**

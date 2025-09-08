@@ -1,16 +1,8 @@
 package chatbot.ui;
 
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-
-import chatbot.command.CommandType;
 import chatbot.command.Parser;
-import chatbot.exception.ChatBotException;
-import chatbot.task.Deadline;
-import chatbot.task.Event;
 import chatbot.task.Task;
 import chatbot.task.TaskList;
-import chatbot.task.Todo;
 
 /**
  * Handles all interactions with the user by printing messages to the console.

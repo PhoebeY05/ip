@@ -51,6 +51,9 @@ public class ChatBot {
         while (true) {
             String input = scanner.nextLine();
             System.out.println(this.getResponse(input));
+            if (input.equals("bye")) {
+                break;
+            }
         }
     }
 

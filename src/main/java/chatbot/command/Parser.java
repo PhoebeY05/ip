@@ -92,7 +92,7 @@ public class Parser {
      */
     public String handleInput(TaskList tasks, Ui ui) throws ChatBotException {
         CommandType commandType = this.getCommandType();
-        Task addedTask = null;
+        Task addedTask;
         List<String> args = this.getArguments();
 
         int initial = tasks.getTotalTasks();
@@ -148,13 +148,10 @@ public class Parser {
                 );
         }
 
-        if (addedTask != null) {
-            tasks.addTask(addedTask);
-            int afterAdd = tasks.getTotalTasks();
-            assert afterAdd == initial + 1;
-            return ui.showAddedTask(addedTask, tasks.getTotalTasks());
-        }
-        return "";
+        tasks.addTask(addedTask);
+        int afterAdd = tasks.getTotalTasks();
+        assert afterAdd == initial + 1;
+        return ui.showAddedTask(addedTask, tasks.getTotalTasks());
     }
 
     /**

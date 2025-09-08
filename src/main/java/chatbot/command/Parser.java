@@ -92,8 +92,10 @@ public class Parser {
      */
     public String handleInput(TaskList tasks, Ui ui) throws ChatBotException {
         CommandType commandType = this.getCommandType();
-        Task addedTask = null;
+        Task addedTask;
         List<String> args = this.getArguments();
+
+        int initial = tasks.getTotalTasks();
 
         switch (commandType) {
             case BYE:
@@ -105,16 +107,20 @@ public class Parser {
             case MARK:
                 Task taskToMark = this.getTask(tasks);
                 taskToMark.markAsDone();
+                assert taskToMark.getStatusIcon().equals("X");
                 return ui.showMarkedAsDone(taskToMark);
 
             case UNMARK:
                 Task taskToUnmark = this.getTask(tasks);
                 taskToUnmark.markAsUndone();
+                assert taskToUnmark.getStatusIcon().equals(" ");
                 return ui.showMarkedAsUndone(taskToUnmark);
 
             case DELETE:
                 Task taskToDelete = this.getTask(tasks);
                 tasks.deleteTask(taskToDelete);
+                int afterDelete = tasks.getTotalTasks();
+                assert afterDelete == initial - 1;
                 return ui.showDeleted(taskToDelete, tasks.getTotalTasks());
 
             case TODO:
@@ -133,6 +139,8 @@ public class Parser {
                 String regex = "\\b" + args.get(0) + "\\b";
                 Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
                 TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());
+                int afterFind = filteredTaskList.getTotalTasks();
+                assert afterFind <= initial;
                 return ui.showFindResult(filteredTaskList);
             default:
                 throw new ChatBotException(
@@ -140,11 +148,10 @@ public class Parser {
                 );
         }
 
-        if (addedTask != null) {
-            tasks.addTask(addedTask);
-            return ui.showAddedTask(addedTask, tasks.getTotalTasks());
-        }
-        return "";
+        tasks.addTask(addedTask);
+        int afterAdd = tasks.getTotalTasks();
+        assert afterAdd == initial + 1;
+        return ui.showAddedTask(addedTask, tasks.getTotalTasks());
     }
 
     /**

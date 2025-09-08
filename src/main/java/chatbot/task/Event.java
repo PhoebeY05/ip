@@ -2,6 +2,7 @@ package chatbot.task;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,6 +88,52 @@ public class Event extends Task {
 
         return eventObject;
     }
+
+    public LocalDateTime getFrom() {
+        return this.from;
+    }
+
+    public LocalDateTime getTo() {
+        return this.to;
+    }
+
+    public static ArrayList<LocalDateTime[]> mergeOverlappingEvents(TaskList sorted) {
+        int n = sorted.getTotalTasks();
+
+        ArrayList<LocalDateTime[]> res = new ArrayList<>();
+
+        // Checking for all possible overlaps
+        for (int i = 0; i < n; i++) {
+            Task task = sorted.getSpecificTask(i);
+            assert task.getClass().getName().equals("chatbot.task.Event");
+
+            Event event = (Event) task;
+            LocalDateTime start = event.getFrom();
+            LocalDateTime end = event.getTo();
+
+            // Skipping already merged intervals
+            boolean isEmpty = res.isEmpty();
+            boolean isNotBeforeEnd = !isEmpty && !res.get(res.size() - 1)[1].isBefore(end);
+            if (isNotBeforeEnd) {
+                continue;
+            }
+
+            // Find the end of the merged range
+            for (int j = i + 1; j < n; j++) {
+                Task curr = sorted.getSpecificTask(j);
+                assert curr.getClass().getName().equals("chatbot.task.Event");
+
+                Event currEvent = (Event) curr;
+                boolean isAfterEnd = currEvent.getFrom().isAfter(end);
+                if (!isAfterEnd) {
+                    end = end.isAfter(currEvent.getTo()) ? end : currEvent.getTo();
+                }
+            }
+            res.add(new LocalDateTime[]{start, end});
+        }
+        return res;
+    }
+
 
     /**
      * Returns the string representation of the event task in the format:

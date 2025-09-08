@@ -1,5 +1,10 @@
 package chatbot.command;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +21,7 @@ import chatbot.ui.Ui;
  * modifying tasks (mark, unmark, delete), listing tasks, and exiting.
  */
 public class Parser {
+    private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
 
     private final String input;
     private final CommandType command;
@@ -44,7 +50,7 @@ public class Parser {
         String eventRegex = "^event (.*) /from (.+) /to (.+)$";
         String deleteRegex = "^delete \\d+";
         String searchRegex = "^find (.*)";
-        String freeTimeRegex = "^free /duration (.+)";
+        String freeTimeRegex = "^free /duration (.*)";
 
         // Compile patterns and create matchers for later argument extraction
         this.todoMatcher = Pattern.compile(todoRegex).matcher(input);
@@ -77,6 +83,19 @@ public class Parser {
         } else {
             this.command = CommandType.UNKNOWN;
         }
+    }
+
+    public static LocalDateTime getStartOfFreeTime(LocalDateTime identity, TaskList tasks, int hours) {
+        LocalDateTime result = identity;
+        for (Task t : tasks.getTasks()) {
+            Event event = (Event) t;
+            if (!event.getFrom().minusHours(hours).isBefore(result)) { // eventStartTime - 4 >= result
+                break;
+            } else {
+                result = event.getTo(); // result = eventEndTime
+            }
+        }
+        return result;
     }
 
     /**
@@ -140,6 +159,34 @@ public class Parser {
                 int afterFind = filteredTaskList.getTotalTasks();
                 assert afterFind <= initial;
                 return ui.showFindResult(filteredTaskList);
+
+            case FIND_FREE_TIMES:
+                int hours = Integer.parseInt(args.get(0));
+                if (hours <= 0) {
+                    throw new ChatBotException("OOPS!!! I'm sorry, but duration must be greater than 0");
+                }
+
+                Instant nearestMin = Instant.now().truncatedTo(ChronoUnit.MINUTES);
+                LocalDateTime nowDateTime = nearestMin.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+                TaskList events = tasks.filter(task -> task.getClass().getName().equals("chatbot.task.Event"));
+
+                TaskList sortedEvents = events.sort((task1, task2) ->
+                                                    ((Event) task1).getFrom().compareTo(((Event) task2).getFrom()));
+                ArrayList<LocalDateTime[]> eventSchedule = Event.mergeOverlappingEvents(sortedEvents);
+
+                TaskList eventsAfterNow = sortedEvents.filter(task -> ((Event) task).getFrom().isAfter(nowDateTime));
+                if (eventsAfterNow.getTotalTasks() == 0) {
+                    return nowDateTime + " to " + nowDateTime.plusHours(hours);
+                }
+
+                LocalDateTime startDateTime = Parser.getStartOfFreeTime(nowDateTime,
+                                                    eventsAfterNow,
+                                                    hours);
+                LocalDateTime endDateTime = startDateTime.plusHours(hours);
+
+                assert !startDateTime.isBefore(nowDateTime);
+                return startDateTime.format(OUTPUT_FORMAT) + " to " + endDateTime.format(OUTPUT_FORMAT);
 
             default:
                 throw new ChatBotException(
@@ -235,6 +282,13 @@ public class Parser {
                 args.add(searchTerm);
                 break;
 
+            case FIND_FREE_TIMES:
+                String hours = this.freeTimeMatcher.group(1).trim();
+                if (hours.isEmpty()) {
+                    throw new ChatBotException("OOPS!!! It looks like you didn’t enter a duration.");
+                }
+                args.add(hours);
+                break;
             default:
                 break;
         }

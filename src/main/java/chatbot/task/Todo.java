@@ -25,27 +25,26 @@ public class Todo extends Task {
     /**
      * Converts a serialized string back into a {@link Todo} object.
      * The string must match the format produced by {@link #toString()}:
-     * <pre>
      * [T][ ] description
      * [T][X] description
-     * </pre>
      *
      * @param todoString Serialized todo string.
      * @return A {@link Todo} object reconstructed from the string.
      * @throws ChatBotException If the string does not match the expected format.
      */
     public static Todo convertToTodo(String todoString) throws ChatBotException {
+        // Regex to capture completion status and description
         String regex = "^\\[T]\\[([ X])]\\s+(.*)$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(todoString);
 
         if (matcher.matches()) {
-            boolean isDone = matcher.group(1).equals("X");
+            boolean isDone = matcher.group(1).equals("X"); // true if marked done
             String description = matcher.group(2);
 
             Todo todoObject = new Todo(description);
             if (isDone) {
-                todoObject.markAsDone();
+                todoObject.markAsDone(); // Restore completion status
             }
 
             return todoObject;
@@ -58,15 +57,13 @@ public class Todo extends Task {
 
     /**
      * Returns the string representation of the todo task in the format:
-     * <pre>
      * [T][ ] description
      * [T][X] description
-     * </pre>
      *
      * @return String representation of the todo task.
      */
     @Override
     public String toString() {
-        return "[T]" + super.toString();
+        return "[T]" + super.toString(); // Prefix with [T] for Todo
     }
 }

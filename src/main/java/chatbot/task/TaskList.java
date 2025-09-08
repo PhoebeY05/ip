@@ -10,7 +10,7 @@ import java.util.stream.Stream;
  */
 public class TaskList {
 
-    private final ArrayList<Task> tasks;
+    private final ArrayList<Task> tasks; // Internal storage for tasks
 
     /**
      * Constructs a TaskList with a predefined list of tasks.
@@ -25,7 +25,7 @@ public class TaskList {
      * Constructs an empty TaskList.
      */
     public TaskList() {
-        this(new ArrayList<>());
+        this(new ArrayList<>()); // Delegate to the other constructor
     }
 
     /**
@@ -83,9 +83,10 @@ public class TaskList {
      * @return A new {@link TaskList} with tasks that satisfy the predicate.
      */
     public TaskList filter(Predicate<Task> predicate) {
-        Stream<Task> stream = this.tasks.stream().filter(predicate);
-        ArrayList<Task> taskList = new ArrayList<>(stream.toList());
-        return new TaskList(taskList);
+        // Filter tasks using the provided predicate
+        Stream<Task> filteredStream = this.tasks.stream().filter(predicate);
+        ArrayList<Task> filteredTasks = new ArrayList<>(filteredStream.toList());
+        return new TaskList(filteredTasks);
     }
 
     /**
@@ -107,7 +108,7 @@ public class TaskList {
             tasksString.append(String.format("%d.%s", i + 1, currentTask.toString()));
 
             if (i < this.tasks.size() - 1) {
-                tasksString.append("\n");
+                tasksString.append("\n"); // Add newline except for last task
             }
         }
 

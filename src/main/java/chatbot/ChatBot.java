@@ -30,8 +30,10 @@ public class ChatBot {
         storage = new Storage(filePath);
 
         try {
+            // Load tasks from storage
             tasks = new TaskList(storage.load());
         } catch (ChatBotException e) {
+            // If loading fails, start with an empty task list and show error
             tasks = new TaskList();
             System.out.println(ui.showLoadingError(e));
         }
@@ -49,8 +51,13 @@ public class ChatBot {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            // Read user input
             String input = scanner.nextLine();
+
+            // Process input and print chatbot response
             System.out.println(this.getResponse(input));
+
+            // Exit loop if input is "bye"
             if (input.equals("bye")) {
                 break;
             }
@@ -69,15 +76,22 @@ public class ChatBot {
 
     /**
      * Generates a response for the user's chat message.
+     * Saves the current task list to storage before processing.
+     *
+     * @param input Raw user input string.
+     * @return Response message to be shown to the user.
      */
     public String getResponse(String input) {
+        // Persist current tasks before handling new input
         storage.saveToStorage(tasks);
 
         Parser parser = new Parser(input);
 
         try {
+            // Parse input and execute command
             return parser.handleInput(tasks, ui);
         } catch (ChatBotException e) {
+            // Return error message to user if command fails
             return e.getMessage();
         }
     }

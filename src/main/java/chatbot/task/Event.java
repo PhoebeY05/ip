@@ -13,13 +13,14 @@ import chatbot.exception.ChatBotException;
  */
 public class Event extends Task {
 
-    protected LocalDateTime from;
-    protected LocalDateTime to;
+    protected LocalDateTime from; // Event start time
+    protected LocalDateTime to;   // Event end time
+
+    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+    private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
 
     /**
      * Constructs an Event task with the given description, start time (string), and end time (string).
-     * The time strings must match the format {@code d/M/yyyy HHmm}, e.g. {@code 2/12/2025 1600}.
-     * <p>
      * Ensures that the start time is not after the end time.
      *
      * @param description Description of the event task.
@@ -29,8 +30,8 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) throws ChatBotException {
         super(description);
-        this.from = LocalDateTime.parse(from, DateTimeFormatter.ofPattern("d/M/yyyy HHmm"));
-        this.to = LocalDateTime.parse(to, DateTimeFormatter.ofPattern("d/M/yyyy HHmm"));
+        this.from = LocalDateTime.parse(from, INPUT_FORMAT);
+        this.to = LocalDateTime.parse(to, INPUT_FORMAT);
 
         if (this.from.isAfter(this.to)) {
             throw new ChatBotException(
@@ -54,57 +55,49 @@ public class Event extends Task {
 
     /**
      * Converts a serialized string back into an {@link Event} object.
-     * The string must match the format produced by {@link #toString()}:
-     * <pre>
-     * [E][ ] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
-     * [E][X] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
-     * </pre>
+     * The string must match the format produced by {@link #toString()}.
      *
      * @param event Serialized event string.
      * @return An {@link Event} object reconstructed from the string.
      * @throws ChatBotException If the string does not match the expected format.
      */
     public static Event convertToEvent(String event) throws ChatBotException {
+        // Regex matches: [E][ ] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
         String regex = "^\\[E]\\[([ X])]\\s+(.*?)\\s+\\(from:\\s+(.+?)\\s+to:\\s+(.+)\\)$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(event);
+        Matcher matcher = Pattern.compile(regex).matcher(event);
 
-        if (matcher.matches()) {
-            boolean isDone = matcher.group(1).equals("X");
-            String description = matcher.group(2);
-            String fromString = matcher.group(3);
-            String toString = matcher.group(4);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
-            LocalDateTime fromDate = LocalDateTime.parse(fromString, formatter);
-            LocalDateTime toDate = LocalDateTime.parse(toString, formatter);
-
-            Event eventObject = new Event(description, fromDate, toDate);
-            if (isDone) {
-                eventObject.markAsDone();
-            }
-
-            return eventObject;
-        } else {
+        if (!matcher.matches()) {
             throw new ChatBotException(
                     "OOPS!! This string cannot be converted to an Event object."
             );
         }
+
+        boolean isDone = matcher.group(1).equals("X");   // Check if event is marked done
+        String description = matcher.group(2).trim();    // Extract description
+        String fromString = matcher.group(3).trim();     // Extract start time
+        String toString = matcher.group(4).trim();       // Extract end time
+
+        LocalDateTime fromDate = LocalDateTime.parse(fromString, OUTPUT_FORMAT);
+        LocalDateTime toDate = LocalDateTime.parse(toString, OUTPUT_FORMAT);
+
+        Event eventObject = new Event(description, fromDate, toDate);
+        if (isDone) {
+            eventObject.markAsDone(); // Restore completion status
+        }
+
+        return eventObject;
     }
 
     /**
      * Returns the string representation of the event task in the format:
-     * <pre>
      * [E][ ] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
-     * [E][X] description (from: Dec 2 2025, 16:00 to: Dec 2 2025, 18:00)
-     * </pre>
      *
      * @return String representation of the event task.
      */
     @Override
     public String toString() {
-        String formattedFrom = this.from.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
-        String formattedTo = this.to.format(DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm"));
+        String formattedFrom = this.from.format(OUTPUT_FORMAT);
+        String formattedTo = this.to.format(OUTPUT_FORMAT);
 
         return "[E]" + super.toString() + " (from: " + formattedFrom + " to: " + formattedTo + ")";
     }

@@ -13,6 +13,6 @@ public class ChatBotException extends Exception {
      * @param msg The detail message describing the cause of the exception.
      */
     public ChatBotException(String msg) {
-        super(msg);
+        super(msg); // Passes the error message to the Exception superclass
     }
 }

@@ -10,7 +10,6 @@ import chatbot.exception.ChatBotException;
 import chatbot.task.*;
 import chatbot.ui.Ui;
 
-
 /**
  * Parses user input into a recognized chatbot command.
  * Supports commands such as adding tasks (todo, deadline, event),
@@ -36,6 +35,7 @@ public class Parser {
     public Parser(String input) {
         this.input = input;
 
+        // Regex patterns for task parsing and commands
         String markRegex = "^mark \\d+";
         String unmarkRegex = "^unmark \\d+";
         String todoRegex = "^todo (.*)";
@@ -44,51 +44,44 @@ public class Parser {
         String deleteRegex = "^delete \\d+";
         String findRegex = "^find (.*)";
 
-        // Prep for extracting regex
-        Pattern todoPattern = Pattern.compile(todoRegex);
-        this.todoMatcher = todoPattern.matcher(input);
+        // Compile patterns and create matchers for later argument extraction
+        this.todoMatcher = Pattern.compile(todoRegex).matcher(input);
+        this.deadlineMatcher = Pattern.compile(deadlineRegex).matcher(input);
+        this.eventMatcher = Pattern.compile(eventRegex).matcher(input);
+        this.findMatcher = Pattern.compile(findRegex).matcher(input);
 
-        Pattern deadlinePattern = Pattern.compile(deadlineRegex);
-        this.deadlineMatcher = deadlinePattern.matcher(input);
-
-        Pattern eventPattern = Pattern.compile(eventRegex);
-        this.eventMatcher = eventPattern.matcher(input);
-
-        Pattern findPattern = Pattern.compile(findRegex);
-        this.findMatcher = findPattern.matcher(input);
-
+        // Determine command type
         if (input.equals("bye")) {
-            this.command = CommandType.BYE;
+            this.command = CommandType.EXIT;
         } else if (input.equals("list")) {
-            this.command = CommandType.LIST;
+            this.command = CommandType.LIST_TASKS;
         } else if (input.matches(markRegex)) {
-            this.command = CommandType.MARK;
+            this.command = CommandType.MARK_TASK;
         } else if (input.matches(unmarkRegex)) {
-            this.command = CommandType.UNMARK;
+            this.command = CommandType.UNMARK_TASK;
         } else if (input.matches(deleteRegex)) {
-            this.command = CommandType.DELETE;
+            this.command = CommandType.DELETE_TASK;
         } else if (todoMatcher.matches()) {
-            this.command = CommandType.TODO;
+            this.command = CommandType.ADD_TODO;
         } else if (deadlineMatcher.matches()) {
-            this.command = CommandType.DEADLINE;
+            this.command = CommandType.ADD_DEADLINE;
         } else if (eventMatcher.matches()) {
-            this.command = CommandType.EVENT;
+            this.command = CommandType.ADD_EVENT;
         } else if (findMatcher.matches()) {
-            this.command = CommandType.FIND;
+            this.command = CommandType.FIND_TASK;
         } else {
             this.command = CommandType.UNKNOWN;
         }
     }
 
-
     /**
      * Processes user input by interpreting the parsed command
      * and updating the task list accordingly.
-     * Terminates the main {@code while(true)} loop if the {@code BYE} command is given.
      *
      * @param tasks  The current task list.
-     * @return {@code false} if the command is {@link CommandType#BYE}, otherwise {@code true}.
-     * @throws ChatBotException If the command is unrecognized or the arguments are invalid.
+     * @param ui     The UI handler for displaying responses.
+     * @return The response string for the chatbot.
+     * @throws ChatBotException If the command is unrecognized or arguments are invalid.
      */
     public String handleInput(TaskList tasks, Ui ui) throws ChatBotException {
         CommandType commandType = this.getCommandType();
@@ -98,50 +91,51 @@ public class Parser {
         int initial = tasks.getTotalTasks();
 
         switch (commandType) {
-            case BYE:
+            case EXIT:
                 return ui.endConversation();
 
-            case LIST:
+            case LIST_TASKS:
                 return ui.listTasks(tasks);
 
-            case MARK:
+            case MARK_TASK:
                 Task taskToMark = this.getTask(tasks);
                 taskToMark.markAsDone();
                 assert taskToMark.getStatusIcon().equals("X");
                 return ui.showMarkedAsDone(taskToMark);
 
-            case UNMARK:
+            case UNMARK_TASK:
                 Task taskToUnmark = this.getTask(tasks);
                 taskToUnmark.markAsUndone();
                 assert taskToUnmark.getStatusIcon().equals(" ");
                 return ui.showMarkedAsUndone(taskToUnmark);
 
-            case DELETE:
+            case DELETE_TASK:
                 Task taskToDelete = this.getTask(tasks);
                 tasks.deleteTask(taskToDelete);
                 int afterDelete = tasks.getTotalTasks();
                 assert afterDelete == initial - 1;
                 return ui.showDeleted(taskToDelete, tasks.getTotalTasks());
 
-            case TODO:
+            case ADD_TODO:
                 addedTask = new Todo(args.get(0));
                 break;
 
-            case DEADLINE:
+            case ADD_DEADLINE:
                 addedTask = new Deadline(args.get(0), args.get(1));
                 break;
 
-            case EVENT:
+            case ADD_EVENT:
                 addedTask = new Event(args.get(0), args.get(1), args.get(2));
                 break;
 
-            case FIND:
+            case FIND_TASK:
                 String regex = "\\b" + args.get(0) + "\\b";
                 Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
                 TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());
                 int afterFind = filteredTaskList.getTotalTasks();
                 assert afterFind <= initial;
                 return ui.showFindResult(filteredTaskList);
+
             default:
                 throw new ChatBotException(
                         "OOPS!!! I'm sorry, but I don't know what that means :-("
@@ -164,13 +158,11 @@ public class Parser {
     }
 
     /**
-     * Retrieves a specific task from the given task list based on
-     * the task number provided in the user input.
+     * Retrieves a specific task from the task list based on input index.
      *
-     * @param tasks The current {@link TaskList} containing all tasks.
-     * @return The task corresponding to the provided index in user input.
-     * @throws ChatBotException If the task number is missing,
-     *                          not an integer, or out of range.
+     * @param tasks The current {@link TaskList}.
+     * @return The task corresponding to the provided index.
+     * @throws ChatBotException If the task number is missing, invalid, or out of range.
      */
     public Task getTask(TaskList tasks) throws ChatBotException {
         String[] parts = input.split(" ");
@@ -193,61 +185,53 @@ public class Parser {
     }
 
     /**
-     * Extracts and returns arguments from the user input based on
-     * the identified command type.
-     *
-     * <ul>
-     *     <li>TODO → [description]</li>
-     *     <li>DEADLINE → [description, by]</li>
-     *     <li>EVENT → [description, from, to]</li>
-     *     <li>FIND -> [search term]</li>
-     * </ul>
+     * Extracts and returns arguments from the user input based on command type.
      *
      * @return A list of extracted arguments for the command.
-     * @throws ChatBotException If mandatory fields such as description
-     *                          are missing or empty.
+     * @throws ChatBotException If mandatory fields are missing or empty.
      */
     public List<String> getArguments() throws ChatBotException {
         List<String> args = new ArrayList<>();
         String description;
 
         switch (command) {
-        case TODO:
-            description = this.todoMatcher.group(1).trim();
-            if (description.isEmpty()) {
-                throw new ChatBotException("OOPS!!! The description of a todo task cannot be empty.");
-            }
-            args.add(description);
-            break;
+            case ADD_TODO:
+                description = this.todoMatcher.group(1).trim();
+                if (description.isEmpty()) {
+                    throw new ChatBotException("OOPS!!! The description of a todo task cannot be empty.");
+                }
+                args.add(description);
+                break;
 
-        case DEADLINE:
-            description = this.deadlineMatcher.group(1).trim();
-            if (description.isEmpty()) {
-                throw new ChatBotException("OOPS!!! The description of a deadline task cannot be empty.");
-            }
-            String by = this.deadlineMatcher.group(2).trim();
-            Collections.addAll(args, description, by);
-            break;
+            case ADD_DEADLINE:
+                description = this.deadlineMatcher.group(1).trim();
+                if (description.isEmpty()) {
+                    throw new ChatBotException("OOPS!!! The description of a deadline task cannot be empty.");
+                }
+                String by = this.deadlineMatcher.group(2).trim();
+                Collections.addAll(args, description, by);
+                break;
 
-        case EVENT:
-            description = this.eventMatcher.group(1).trim();
-            if (description.isEmpty()) {
-                throw new ChatBotException("OOPS!!! The description of an event task cannot be empty.");
-            }
-            String from = this.eventMatcher.group(2).trim();
-            String to = this.eventMatcher.group(3).trim();
-            Collections.addAll(args, description, from, to);
-            break;
-        case FIND:
-            String searchTerm = this.findMatcher.group(1).trim();
-            if (searchTerm.isEmpty()) {
-                throw new ChatBotException("OOPS!!! It looks like you didn’t enter a search term.");
-            }
-            args.add(searchTerm);
-            break;
+            case ADD_EVENT:
+                description = this.eventMatcher.group(1).trim();
+                if (description.isEmpty()) {
+                    throw new ChatBotException("OOPS!!! The description of an event task cannot be empty.");
+                }
+                String from = this.eventMatcher.group(2).trim();
+                String to = this.eventMatcher.group(3).trim();
+                Collections.addAll(args, description, from, to);
+                break;
 
-        default:
-            break;
+            case FIND_TASK:
+                String searchTerm = this.findMatcher.group(1).trim();
+                if (searchTerm.isEmpty()) {
+                    throw new ChatBotException("OOPS!!! It looks like you didn’t enter a search term.");
+                }
+                args.add(searchTerm);
+                break;
+
+            default:
+                break;
         }
 
         return args;

@@ -14,19 +14,26 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    private ChatBot chatbot = new ChatBot("data/tasks.txt");
+    private final ChatBot chatbot = new ChatBot("data/tasks.txt"); // ChatBot instance
 
     @Override
     public void start(Stage stage) {
         try {
+            // Load FXML layout for main window
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
-            AnchorPane ap = fxmlLoader.load();
-            Scene scene = new Scene(ap);
+            AnchorPane mainLayout = fxmlLoader.load();
+
+            // Create a scene with the loaded layout and set it to the stage
+            Scene scene = new Scene(mainLayout);
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setChatBot(chatbot);  // inject the ChatBot instance
-            stage.show();
+
+            // Inject ChatBot instance into the controller
+            fxmlLoader.<MainWindow>getController().setChatBot(chatbot);
+
+            stage.show(); // Display the stage
         } catch (IOException e) {
-            e.printStackTrace();
+            // Handle FXML loading errors
+            e.printStackTrace(); // Consider proper logging in production
         }
     }
 }

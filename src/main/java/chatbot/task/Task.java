@@ -7,8 +7,8 @@ package chatbot.task;
  */
 public class Task {
 
-    protected String description;
-    protected boolean isDone;
+    protected String description;  // Task description
+    protected boolean isDone;      // Completion status
 
     /**
      * Constructs a Task with the given description.
@@ -18,7 +18,7 @@ public class Task {
      */
     public Task(String description) {
         this.description = description;
-        this.isDone = false;
+        this.isDone = false; // Default to not done
     }
 
     /**
@@ -31,7 +31,7 @@ public class Task {
      * @return Status icon string.
      */
     public String getStatusIcon() {
-        return (isDone ? "X" : " "); // mark done task with X
+        return isDone ? "X" : " "; // Mark done task with "X"
     }
 
     /**
@@ -50,15 +50,14 @@ public class Task {
 
     /**
      * Returns the string representation of the task in the format:
-     * <pre>
      * [ ] description   // if not done
      * [X] description   // if done
-     * </pre>
      *
      * @return String representation of the task.
      */
     @Override
     public String toString() {
+        // Use getStatusIcon() to show completion status
         return String.format("[%s] %s", this.getStatusIcon(), this.description);
     }
 }

@@ -35,12 +35,14 @@ public class Storage {
         Path path = Paths.get(filePath);
 
         try {
+            // Create parent directories if they do not exist
             Files.createDirectories(path.getParent());
         } catch (IOException e) {
             System.err.println("Failed to create parent directories: " + e.getMessage());
         }
 
         try {
+            // Create the file if it does not exist
             if (!Files.exists(path)) {
                 Files.createFile(path);
             }
@@ -58,14 +60,15 @@ public class Storage {
     public void saveToStorage(TaskList tasks) {
         File file = new File(this.filePath);
 
-        try (FileWriter writer = new FileWriter(file, false)) { // false = overwrite
+        // Overwrite file content on each save instead of appending
+        try (FileWriter writer = new FileWriter(file, false)) {
             for (Task task : tasks.getTasks()) {
                 if (task != null) {
                     writer.write(task + System.lineSeparator());
                 }
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error saving tasks to storage: " + e.getMessage());
         }
     }
 
@@ -87,31 +90,28 @@ public class Storage {
 
         try {
             File file = new File(this.filePath);
-            Scanner reader = new Scanner(file);
+            try (Scanner reader = new Scanner(file)) { // Auto-close scanner
+                while (reader.hasNextLine()) {
+                    String line = reader.nextLine().trim();
 
-            while (reader.hasNextLine()) {
-                String data = reader.nextLine();
-                if (data.trim().isEmpty()) {
-                    break;
-                }
+                    if (line.isEmpty()) {
+                        continue; // Skip empty lines
+                    }
 
-                if (data.startsWith("[T]")) {
-                    Todo todo = Todo.convertToTodo(data);
-                    tasks.add(todo);
-                } else if (data.startsWith("[D]")) {
-                    Deadline deadline = Deadline.convertToDeadline(data);
-                    tasks.add(deadline);
-                } else if (data.startsWith("[E]")) {
-                    Event event = Event.convertToEvent(data);
-                    tasks.add(event);
-                } else {
-                    throw new ChatBotException("OOPS!! Data file has unknown line!");
+                    // Determine task type based on prefix
+                    if (line.startsWith("[T]")) {
+                        tasks.add(Todo.convertToTodo(line));
+                    } else if (line.startsWith("[D]")) {
+                        tasks.add(Deadline.convertToDeadline(line));
+                    } else if (line.startsWith("[E]")) {
+                        tasks.add(Event.convertToEvent(line));
+                    } else {
+                        throw new ChatBotException("OOPS!! Data file has unknown line: " + line);
+                    }
                 }
             }
-
-            reader.close();
-        } catch (Exception e) {
-            throw new ChatBotException(e.getMessage());
+        } catch (IOException | ChatBotException e) {
+            throw new ChatBotException("Failed to load tasks: " + e.getMessage());
         }
 
         return tasks;

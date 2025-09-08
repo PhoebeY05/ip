@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * Represents a dialog box consisting of an ImageView to represent the speaker's face
- * and a label containing text from the speaker.
+ * and a Label containing text from the speaker.
  */
 public class DialogBox extends HBox {
     @FXML
@@ -24,38 +24,60 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
+    /**
+     * Constructs a DialogBox with the given text and image.
+     *
+     * @param text The message content.
+     * @param img  The speaker's display picture.
+     */
     private DialogBox(String text, Image img) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
-            fxmlLoader.setController(this);
-            fxmlLoader.setRoot(this);
-            fxmlLoader.load();
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    MainWindow.class.getResource("/view/DialogBox.fxml"));
+            fxmlLoader.setController(this); // This DialogBox instance acts as its controller
+            fxmlLoader.setRoot(this);       // Sets this instance as the root layout
+            fxmlLoader.load();              // Loads FXML into this object
         } catch (IOException e) {
+            // Printing stack trace is usually not ideal; consider logging instead
             e.printStackTrace();
         }
 
-        dialog.setText(text);
-        displayPicture.setImage(img);
+        dialog.setText(text);          // Sets the dialog text
+        displayPicture.setImage(img);  // Sets the speaker image
     }
 
     /**
-     * Flips the dialog box such that the ImageView is on the left and text on the right.
+     * Flips the dialog box such that the ImageView is on the left
+     * and the text is on the right.
      */
     private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
-        setAlignment(Pos.TOP_LEFT);
+        ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
+        Collections.reverse(children);  // Reverses order: image first, text second
+        getChildren().setAll(children);
+        setAlignment(Pos.TOP_LEFT);     // Aligns flipped layout to top-left
     }
 
+    /**
+     * Creates a DialogBox for user messages (image on the right).
+     *
+     * @param text The user message.
+     * @param img  The user image.
+     * @return A DialogBox instance representing the user dialog.
+     */
     public static DialogBox getUserDialog(String text, Image img) {
         return new DialogBox(text, img);
     }
 
-    public static DialogBox getDukeDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.flip();
+    /**
+     * Creates a DialogBox for chatbot messages (image on the left).
+     *
+     * @param text The chatbot message.
+     * @param img  The chatbot image.
+     * @return A DialogBox instance representing the chatbot dialog.
+     */
+    public static DialogBox getChatBotDialog(String text, Image img) {
+        DialogBox db = new DialogBox(text, img);
+        db.flip(); // Flips so chatbot image is on the left
         return db;
     }
 }
-

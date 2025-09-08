@@ -12,6 +12,7 @@ public enum CommandType {
     ADD_TODO,       // Adds a "to-do" task
     ADD_DEADLINE,   // Adds a "deadline" task
     ADD_EVENT,      // Adds an "event" task
-    FIND_TASK,   // Finds tasks matching a keyword
+    SEARCH_TASK,   // Finds tasks matching a keyword
+    FIND_FREE_TIMES, // Finds nearest free times
     UNKNOWN         // Represents an unrecognized command
 }

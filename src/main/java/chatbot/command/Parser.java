@@ -23,7 +23,8 @@ public class Parser {
     private final Matcher todoMatcher;
     private final Matcher deadlineMatcher;
     private final Matcher eventMatcher;
-    private final Matcher findMatcher;
+    private final Matcher searchMatcher;
+    private final Matcher freeTimeMatcher;
 
     /**
      * Constructs a Parser object and determines the command type
@@ -42,13 +43,15 @@ public class Parser {
         String deadlineRegex = "^deadline (.*) /by (.+)";
         String eventRegex = "^event (.*) /from (.+) /to (.+)$";
         String deleteRegex = "^delete \\d+";
-        String findRegex = "^find (.*)";
+        String searchRegex = "^find (.*)";
+        String freeTimeRegex = "^free /duration (.+)";
 
         // Compile patterns and create matchers for later argument extraction
         this.todoMatcher = Pattern.compile(todoRegex).matcher(input);
         this.deadlineMatcher = Pattern.compile(deadlineRegex).matcher(input);
         this.eventMatcher = Pattern.compile(eventRegex).matcher(input);
-        this.findMatcher = Pattern.compile(findRegex).matcher(input);
+        this.searchMatcher = Pattern.compile(searchRegex).matcher(input);
+        this.freeTimeMatcher = Pattern.compile(freeTimeRegex).matcher(input);
 
         // Determine command type
         if (input.equals("bye")) {
@@ -67,8 +70,10 @@ public class Parser {
             this.command = CommandType.ADD_DEADLINE;
         } else if (eventMatcher.matches()) {
             this.command = CommandType.ADD_EVENT;
-        } else if (findMatcher.matches()) {
-            this.command = CommandType.FIND_TASK;
+        } else if (searchMatcher.matches()) {
+            this.command = CommandType.SEARCH_TASK;
+        } else if (freeTimeMatcher.matches()) {
+            this.command = CommandType.FIND_FREE_TIMES;
         } else {
             this.command = CommandType.UNKNOWN;
         }
@@ -128,7 +133,7 @@ public class Parser {
                 addedTask = new Event(args.get(0), args.get(1), args.get(2));
                 break;
 
-            case FIND_TASK:
+            case SEARCH_TASK:
                 String regex = "\\b" + args.get(0) + "\\b";
                 Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
                 TaskList filteredTaskList = tasks.filter(task -> pattern.matcher(task.toString()).find());
@@ -222,8 +227,8 @@ public class Parser {
                 Collections.addAll(args, description, from, to);
                 break;
 
-            case FIND_TASK:
-                String searchTerm = this.findMatcher.group(1).trim();
+            case SEARCH_TASK:
+                String searchTerm = this.searchMatcher.group(1).trim();
                 if (searchTerm.isEmpty()) {
                     throw new ChatBotException("OOPS!!! It looks like you didn’t enter a search term.");
                 }

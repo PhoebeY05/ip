@@ -175,15 +175,14 @@ public class Parser {
                 Instant nearestMin = Instant.now().truncatedTo(ChronoUnit.MINUTES);
                 LocalDateTime nowDateTime = nearestMin.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-                TaskList events = tasks.filter(task -> task instanceof Event);
-                TaskList sortedEvents = events.sort(Comparator.comparing(task -> ((Event) task).getFrom()));
-                TaskList eventsAfterNow = sortedEvents.filter(task -> ((Event) task).getFrom().isAfter(nowDateTime));
+                TaskList eventsAfterNow = tasks.filter(task -> task instanceof Event && ((Event) task).getFrom().isAfter(nowDateTime));
+                TaskList sortedEvents = eventsAfterNow.sort(Comparator.comparing(task -> ((Event) task).getFrom()));
 
-                if (eventsAfterNow.getTotalTasks() == 0) {
+                if (sortedEvents.getTotalTasks() == 0) {
                     return nowDateTime + " to " + nowDateTime.plusHours(hours);
                 }
 
-                LocalDateTime startDateTime = Parser.getStartOfFreeTime(nowDateTime, eventsAfterNow, hours);
+                LocalDateTime startDateTime = Parser.getStartOfFreeTime(nowDateTime, sortedEvents, hours);
                 LocalDateTime endDateTime = startDateTime.plusHours(hours);
 
                 assert !startDateTime.isBefore(nowDateTime);

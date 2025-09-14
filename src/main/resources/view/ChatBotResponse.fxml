@@ -4,13 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Background?>
-<?import javafx.scene.layout.BackgroundFill?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.layout.CornerRadii?>
 
-<fx:root alignment="TOP_LEFT"
-         maxHeight="1.7976931348623157E308"
+<fx:root maxHeight="1.7976931348623157E308"
          maxWidth="1.7976931348623157E308"
          prefWidth="400.0"
          type="javafx.scene.layout.HBox"

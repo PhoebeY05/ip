@@ -37,7 +37,7 @@ public class ChatBotResponse extends HBox {
             fxmlLoader.setRoot(this);       // Sets this instance as root
             fxmlLoader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         dialog.setText(text);

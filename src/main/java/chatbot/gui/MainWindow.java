@@ -1,6 +1,7 @@
 package chatbot.gui;
 
 import chatbot.ChatBot;
+import chatbot.exception.ChatBotException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -37,6 +38,8 @@ public class MainWindow extends AnchorPane {
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        ChatBotResponse welcomeMessage = ChatBotResponse.getChatBotResponse("Hello! I am your chatbot. How can I assist you today?", chatbotImage);
+        dialogContainer.getChildren().add(welcomeMessage);
     }
 
     /**
@@ -55,14 +58,22 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String inputText = userInput.getText();                  // Get user input
-        String chatbotResponse = chatbot.getResponse(inputText); // Get response from ChatBot
 
-        // Add both user and chatbot dialogs to the container
-        dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(inputText, userImage),
-                DialogBox.getChatBotDialog(chatbotResponse, chatbotImage)
+        // Add user dialog to the container
+        dialogContainer.getChildren().add(
+                DialogBox.getUserDialog(inputText, userImage)
         );
 
+        try {
+            String response = chatbot.getResponse(inputText); // may throw ChatBotException
+            dialogContainer.getChildren().add(
+                    ChatBotResponse.getChatBotResponse(response, chatbotImage)
+            );
+        } catch (ChatBotException e) {
+            dialogContainer.getChildren().add(
+                    ChatBotResponse.getErrorResponse("Error: " + e.getMessage(), chatbotImage)
+            );
+        }
         userInput.clear(); // Clear input field for next message
     }
 }

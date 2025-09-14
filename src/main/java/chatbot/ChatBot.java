@@ -54,8 +54,12 @@ public class ChatBot {
             // Read user input
             String input = scanner.nextLine();
 
-            // Process input and print chatbot response
-            System.out.println(this.getResponse(input));
+            try {
+                // Process input and print chatbot response
+                System.out.println(this.getResponse(input));
+            } catch (ChatBotException e) {
+                System.out.println(e.getMessage());
+            }
 
             // Exit loop if input is "bye"
             if (input.equals("bye")) {
@@ -81,18 +85,13 @@ public class ChatBot {
      * @param input Raw user input string.
      * @return Response message to be shown to the user.
      */
-    public String getResponse(String input) {
+    public String getResponse(String input) throws ChatBotException{
         // Persist current tasks before handling new input
         storage.saveToStorage(tasks);
 
         Parser parser = new Parser(input);
 
-        try {
-            // Parse input and execute command
-            return parser.handleInput(tasks, ui);
-        } catch (ChatBotException e) {
-            // Return error message to user if command fails
-            return e.getMessage();
-        }
+        // Parse input and execute command
+        return parser.handleInput(tasks, ui);
     }
 }

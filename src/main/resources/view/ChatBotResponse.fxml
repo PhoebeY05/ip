@@ -4,8 +4,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Background?>
+<?import javafx.scene.layout.BackgroundFill?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.layout.CornerRadii?>
 
-<fx:root alignment="TOP_RIGHT"
+<fx:root alignment="TOP_LEFT"
          maxHeight="1.7976931348623157E308"
          maxWidth="1.7976931348623157E308"
          prefWidth="400.0"
@@ -13,11 +17,11 @@
          xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <!-- User message -->
-        <Label fx:id="dialog" text="Label" wrapText="true"
-               style="-fx-background-color: #87CEFA; -fx-background-radius: 10 10 0 10; -fx-padding: 8;"/>
-        <!-- User avatar -->
+        <!-- Chatbot avatar -->
         <ImageView fx:id="displayPicture" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+        <!-- Chatbot message -->
+        <Label fx:id="dialog" text="Response" wrapText="true"
+               style="-fx-background-color: #e0e0e0; -fx-background-radius: 10 10 10 0; -fx-padding: 8;" />
     </children>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>

@@ -25,41 +25,66 @@ public class Parser {
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy, HH:mm");
 
     private final String input;
-    private final CommandType command;
+    private CommandType command;
 
-    private final Matcher todoMatcher;
-    private final Matcher deadlineMatcher;
-    private final Matcher eventMatcher;
-    private final Matcher searchMatcher;
-    private final Matcher freeTimeMatcher;
+    private Matcher todoMatcher;
+    private Matcher deadlineMatcher;
+    private Matcher eventMatcher;
+    private Matcher searchMatcher;
+    private Matcher freeTimeMatcher;
+
+    // Used ChatGPT to make Parser constructor adhere to SLAP and write JavaDoc comments for new functions
 
     /**
-     * Creates a parser for the given user input.
-     * Identifies the command type and prepares regex matchers.
-     *
-     * @param input Raw user input.
+     * Constructs a Parser for the given user input.
+     * This parser identifies the command type and prepares regex matchers
+     * to extract command arguments.
      */
     public Parser(String input) {
         this.input = input;
 
-        // Regex patterns for supported commands
-        String markRegex = "^mark \\d+";
-        String unmarkRegex = "^unmark \\d+";
-        String todoRegex = "^todo (.*)";
-        String deadlineRegex = "^deadline (.*) /by (.+)";
-        String eventRegex = "^event (.*) /from (.+) /to (.+)$";
-        String deleteRegex = "^delete \\d+";
-        String searchRegex = "^find (.*)";
-        String freeTimeRegex = "^free /duration (.*)";
+        initPatterns();
+        compileMatchers();
+        determineCommandType();
+    }
 
-        // Compile matchers for extracting arguments
+    /** Regex patterns for matching commands. */
+    private String markRegex;
+    private String unmarkRegex;
+    private String todoRegex;
+    private String deadlineRegex;
+    private String eventRegex;
+    private String deleteRegex;
+    private String searchRegex;
+    private String freeTimeRegex;
+
+    /** Initializes regex patterns for all supported commands. */
+    private void initPatterns() {
+        markRegex = "^mark \\d+";
+        unmarkRegex = "^unmark \\d+";
+        todoRegex = "^todo (.*)";
+        deadlineRegex = "^deadline (.*) /by (.+)";
+        eventRegex = "^event (.*) /from (.+) /to (.+)$";
+        deleteRegex = "^delete \\d+";
+        searchRegex = "^find (.*)";
+        freeTimeRegex = "^free /duration (.*)";
+    }
+
+    /** Compiles regex matchers from the initialized patterns for argument extraction. */
+    private void compileMatchers() {
         this.todoMatcher = Pattern.compile(todoRegex).matcher(input);
         this.deadlineMatcher = Pattern.compile(deadlineRegex).matcher(input);
         this.eventMatcher = Pattern.compile(eventRegex).matcher(input);
         this.searchMatcher = Pattern.compile(searchRegex).matcher(input);
         this.freeTimeMatcher = Pattern.compile(freeTimeRegex).matcher(input);
+    }
 
-        // Determine command type
+    /**
+     * Determines the command type based on the input string.
+     * Sets the {@link #command} field accordingly.
+     * If the input does not match any known command, sets it to {@link CommandType#UNKNOWN}.
+     */
+    private void determineCommandType() {
         if (input.equals("bye")) {
             this.command = CommandType.EXIT;
         } else if (input.equals("list")) {
@@ -84,6 +109,7 @@ public class Parser {
             this.command = CommandType.UNKNOWN;
         }
     }
+
 
     // Used ChatGPT to make handleInput adhere to SLAP and write JavaDoc comments for new functions
 

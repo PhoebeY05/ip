@@ -108,4 +108,18 @@ public class Ui {
         message.append("What can I do for you?");
         return message.toString();
     }
+
+    // Used ChatGPT to add UI functions to return message instead of returning string directly
+
+    /**
+     * Formats and returns a message displaying the available free time range.
+     *
+     * @param start Formatted start datetime string.
+     * @param end   Formatted end datetime string.
+     * @return Message showing the free time slot.
+     */
+    public String showFreeTimeRange(String start, String end) {
+        return "Your next available free time slot is from " + start + " to " + end + ".";
+    }
+
 }

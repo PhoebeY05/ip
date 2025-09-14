@@ -40,36 +40,41 @@ public class ChatBotResponse extends HBox {
             System.out.println(e.getMessage());
         }
 
-        dialog.setText(text);
-
         // Style the dialog based on whether it's an error
         if (isError) {
             dialog.setStyle(
-                    "-fx-background-color: #FFCCCC; " +         // softer pastel red
-                            "-fx-text-fill: #990000; " +                // dark red text
-                            "-fx-background-radius: 18 18 18 4; " +    // rounded with tail effect
-                            "-fx-padding: 12 14 12 14; " +             // top/right/bottom/left padding
+                    "-fx-background-color: #B6244F; " +
+                            "-fx-text-fill: #e9edde; " +
+                            "-fx-background-radius: 18 18 18 4; " +
+                            "-fx-padding: 12 14 12 14; " +
                             "-fx-font-size: 14px; " +
                             "-fx-font-weight: bold; " +
                             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0.5, 0, 2);"
             );
         } else {
             dialog.setStyle(
-                    "-fx-background-color: #E8E8E8; " +        // soft gray
-                            "-fx-text-fill: #333333; " +               // dark gray text
-                            "-fx-background-radius: 18 18 18 4; " +    // same bubble shape for asymmetry
+                    "-fx-background-color: #5c80bc; " +
+                            "-fx-text-fill: #e9edde; " +
+                            "-fx-background-radius: 18 18 18 4; " +
                             "-fx-padding: 12 14 12 14; " +
                             "-fx-font-size: 14px; " +
                             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.5, 0, 1);"
             );
         }
 
-
         // Clip the display picture to a circle
         Circle clipCircle = new Circle(displayPicture.getFitWidth() / 2, displayPicture.getFitHeight() / 2,
                 displayPicture.getFitWidth() / 2);
         displayPicture.setClip(clipCircle);
         displayPicture.setImage(img);
+
+        dialog.setText(text);
+        dialog.setWrapText(true);
+        dialog.setMaxWidth(300);
+
+        HBox.setHgrow(dialog, javafx.scene.layout.Priority.ALWAYS); // allow Label to expand
+        this.setSpacing(10);
+
     }
 
     /**

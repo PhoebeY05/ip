@@ -11,15 +11,13 @@
          type="javafx.scene.layout.HBox"
          xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <!-- Chatbot avatar -->
-        <ImageView fx:id="displayPicture" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
-        <!-- Chatbot message -->
-        <Label fx:id="dialog" text="Response" wrapText="true"
-               style="-fx-background-color: #e0e0e0; -fx-background-radius: 10 10 10 0; -fx-padding: 8;" />
-    </children>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
     </padding>
     <spacing>10</spacing>
+    <!-- Chatbot avatar -->
+    <ImageView fx:id="displayPicture" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"/>
+    <!-- Chatbot message -->
+    <Label fx:id="dialog" text="Response" wrapText="true"
+           style="-fx-background-color: #e0e0e0; -fx-background-radius: 10 10 10 0; -fx-padding: 8;"/>
 </fx:root>

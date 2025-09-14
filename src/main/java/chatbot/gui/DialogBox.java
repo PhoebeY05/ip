@@ -38,10 +38,24 @@ public class DialogBox extends HBox {
             System.out.println(e.getMessage());
         }
 
-        dialog.setText(text);          // Sets the dialog text
+        dialog.setStyle(
+                "-fx-background-color: #4d5061; " + // Davy's Gray
+                        "-fx-text-fill: #e9edde; " +       // Beige text for contrast
+                        "-fx-background-radius: 18 18 4 18; " + // mirrored bubble
+                        "-fx-padding: 12 14 12 14; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.5, 0, 1);"
+        );
+
         Circle clipCircle = new Circle(displayPicture.getFitWidth() / 2, displayPicture.getFitHeight() / 2, displayPicture.getFitWidth() / 2);
         displayPicture.setClip(clipCircle);
         displayPicture.setImage(img);  // Sets the speaker image
+
+        // After setting dialog text
+        dialog.setText(text);
+        dialog.setWrapText(true);
+        dialog.setMaxWidth(300);
+
     }
 
 

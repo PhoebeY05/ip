@@ -28,8 +28,8 @@ public class MainWindow extends AnchorPane {
     private ChatBot chatbot;
 
     // Images for the user and the chatbot
-    private final Image userImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/DaUser.png")));
-    private final Image chatbotImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/DaDuke.png")));
+    private final Image userImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/User.png")));
+    private final Image chatbotImage = new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/images/ChatBot.jpg")));
 
     /**
      * Initializes the GUI. Binds the scroll pane to the height of the dialog container

@@ -73,7 +73,7 @@ OK, I've marked this task as not done yet:
 [D][X] buy book (by: Sep 21 2025, 19:00)
 ```
 
-# Delete Tasks
+## Delete Tasks
 
 **Format: `delete INDEX`**
 
@@ -85,7 +85,7 @@ Noted. I've removed this task:
 Now you have ? task(s) in the list.
 ```
 
-# Search Tasks
+## Search Tasks
 
 Note: Performs case-insensitive matching using word boundaries, so searching for "book" will match tasks containing the word "book" but not "booking"
 
@@ -98,7 +98,7 @@ Here are the matching tasks in your list:
 1. [E][] read book (from: Sep 22 2025, 16:00 to: Sep 22 2025, 18:00)
 ```
 
-# Find Free Times
+## Find Free Times
 Note: Finds available time slots of a specified duration (in hours) by analyzing scheduled events and calculating gaps between them
 
 **Format: `free /duration HOURS`**

@@ -1,30 +1,118 @@
 # ChatBot User Guide
 
-// Update the title above to match the actual product name
+![Ui.png](Ui.png)
 
-// Product screenshot goes here
+ChatBot is a personal task management application that allows users to create, modify, and query three types of tasks: todos, deadlines, and events. The system provides dual interfaces - a text-based console interface and a JavaFX graphical interface - while maintaining persistent storage of all task data.
 
-// Product intro goes here
+The application supports comprehensive task operations including creation, deletion, status updates, keyword-based searching, and intelligent scheduling features such as finding available time slots between existing commitments.
 
-## Adding deadlines
+## Adding Tasks
+Note: DATEs are passed in the format: d/M/yyyy HHmm
 
-// Describe the action and its outcome.
+### 1. Deadlines
 
-// Give examples of usage
+**Format: `deadline NAME /by DATE`**
 
-Example: `keyword (optional arguments)`
-
-// A description of the expected outcome goes here
+Example: `deadline buy book /by 21/09/2025 1900`
 
 ```
-expected output
+Noted. I've added this task:
+[D][ ] buy book (by: Sep 21 2025, 19:00)
+Now you have ? task(s) in the list.
 ```
 
-## Feature ABC
+### 2. Events
 
-// Feature details
+**Format: `event NAME /from DATE1 /to DATE2`**
 
 
-## Feature XYZ
+Example: `event read book /from 22/09/2025 1600 /to 22/09/2025 1800`
 
-// Feature details
+```
+Noted. I've added this task:
+[E][ ] read book (from: Sep 22 2025, 16:00 to: Sep 22 2025, 18:00)
+Now you have ? task(s) in the list.
+```
+
+### 3. Todos
+
+**Format: `todo NAME`**
+
+
+Example: `todo pack book`
+
+```
+Noted. I've added this task:
+[T][ ] pack book
+Now you have ? task(s) in the list.
+```
+
+## Marking Tasks
+
+Note: INDEX starts from 1
+
+### 1. Completed
+
+**Format: `mark INDEX`**
+
+Example: `mark 1`
+
+```
+Nice! I've marked this task as done:
+[D][X] buy book (by: Sep 21 2025, 19:00)
+```
+
+### 2. Uncompleted
+
+**Format: `unmark INDEX`**
+
+Example: `unmark 1`
+
+```
+OK, I've marked this task as not done yet:
+[D][X] buy book (by: Sep 21 2025, 19:00)
+```
+
+# Delete Tasks
+
+**Format: `delete INDEX`**
+
+Example: `delete 1`
+
+```
+Noted. I've removed this task:
+[D][] buy book (by: Sep 21 2025, 19:00)
+Now you have ? task(s) in the list.
+```
+
+# Search Tasks
+
+Note: Performs case-insensitive matching using word boundaries, so searching for "book" will match tasks containing the word "book" but not "booking"
+
+**Format: `find KEYWORD`**
+
+Example: `find read`
+
+```
+Here are the matching tasks in your list:
+1. [E][] read book (from: Sep 22 2025, 16:00 to: Sep 22 2025, 18:00)
+```
+
+# Find Free Times
+Note: Finds available time slots of a specified duration (in hours) by analyzing scheduled events and calculating gaps between them
+
+**Format: `free /duration HOURS`**
+
+Example: `free /duration 4` at Sep 14 2025, 18:18
+
+```
+Your next available free time slot is from
+Sep 14 2025, 18:18 to Sep 14 2025, 22:18.
+```
+
+Example: `free /duration 4` at Sep 22 2025, 16:00
+
+```
+Your next available free time slot is from
+Sep 22 2025, 18:00 to Sep 14 2025, 22:00.
+```

@@ -45,10 +45,6 @@ run{
     standardInput = System.in
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     String javaFxVersion = '17.0.7'
 

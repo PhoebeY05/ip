@@ -24,6 +24,9 @@ public class Ui {
      * @param tasks The current task list.
      */
     public String listTasks(TaskList tasks) {
+        if (tasks.getTotalTasks() == 0) {
+            return "You have no tasks currently. Add one now!";
+        }
         return tasks.toString();
     }
 

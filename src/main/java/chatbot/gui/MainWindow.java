@@ -38,7 +38,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
-        ChatBotResponse welcomeMessage = ChatBotResponse.getChatBotResponse("Hello! I am your chatbot. How can I assist you today?", chatbotImage);
+        ChatBotResponse welcomeMessage = ChatBotResponse.getChatBotResponse("Hello! I am ChatBot! How can I assist you today?", chatbotImage);
         dialogContainer.getChildren().add(welcomeMessage);
     }
 
